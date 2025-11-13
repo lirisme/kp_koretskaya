@@ -1,0 +1,112 @@
+﻿<Window x:Class="DrivingSchool.Views.StudentSelectionDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Выбор студентов для документов" 
+        WindowStartupLocation="CenterOwner"
+        Width="800" Height="600"
+        Background="White">
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Background="#F8F9FA" Padding="10" Margin="0,0,0,10">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Поиск:" VerticalAlignment="Center" FontWeight="SemiBold" Margin="0,0,10,0"/>
+                <TextBox x:Name="SearchTextBox" Width="300" Padding="5" 
+                         TextChanged="SearchTextBox_TextChanged"
+                         ToolTip="Поиск по ФИО или телефону"/>
+            </StackPanel>
+        </Border>
+
+        <GroupBox Grid.Row="1" Header="Все студенты (отмечайте флажками)" Margin="0,0,0,10">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Button Grid.Row="0" Content="✅ Выбрать всех" 
+                       Click="SelectAll_Click" Margin="5" Padding="10,5"
+                       HorizontalAlignment="Left" Background="#27AE60" Foreground="White"/>
+
+                <DataGrid Grid.Row="1" x:Name="AllStudentsGrid" 
+                         AutoGenerateColumns="False"
+                         IsReadOnly="True">
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn Header="Выбор" Width="60">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <CheckBox Checked="CheckBox_Changed"
+                     Unchecked="CheckBox_Changed"
+                     HorizontalAlignment="Center"
+                     VerticalAlignment="Center"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                        <DataGridTextColumn Header="Фамилия" Binding="{Binding Student.LastName}" Width="120"/>
+                        <DataGridTextColumn Header="Имя" Binding="{Binding Student.FirstName}" Width="120"/>
+                        <DataGridTextColumn Header="Отчество" Binding="{Binding Student.MiddleName}" Width="120"/>
+                        <DataGridTextColumn Header="Телефон" Binding="{Binding Student.Phone}" Width="120"/>
+                        <DataGridTextColumn Header="Группа" Binding="{Binding Student.GroupId}" Width="80"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </GroupBox>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,10">
+            <TextBlock x:Name="SelectedCountText" Text="Выбрано: 0" 
+                      FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,20,0"/>
+
+            <Button Content="⬆ Вверх" Click="MoveUp_Click" Padding="10,5" Margin="5"
+                   ToolTip="Переместить выбранного студента вверх"/>
+            <Button Content="⬇ Вниз" Click="MoveDown_Click" Padding="10,5" Margin="5"
+                   ToolTip="Переместить выбранного студента вниз"/>
+        </StackPanel>
+
+        <GroupBox Grid.Row="3" Header="Выбранные студенты (порядок важен для документов)" Margin="0,0,0,10">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <DataGrid Grid.Row="0" x:Name="SelectedStudentsGrid" 
+                         SelectionMode="Extended"
+                         AutoGenerateColumns="False"
+                         IsReadOnly="True"
+                         SelectionChanged="SelectedStudentsGrid_SelectionChanged"
+                         LoadingRow="SelectedStudentsGrid_LoadingRow">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="№" Binding="{Binding RelativeSource={RelativeSource AncestorType=DataGridRow}, Path=Header}" Width="40"/>
+                        <DataGridTextColumn Header="Фамилия" Binding="{Binding LastName}" Width="120"/>
+                        <DataGridTextColumn Header="Имя" Binding="{Binding FirstName}" Width="120"/>
+                        <DataGridTextColumn Header="Отчество" Binding="{Binding MiddleName}" Width="120"/>
+                        <DataGridTextColumn Header="Телефон" Binding="{Binding Phone}" Width="120"/>
+                        <DataGridTextColumn Header="Группа" Binding="{Binding GroupId}" Width="80"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+                <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button x:Name="RemoveButton" Content="❌ Удалить выбранных" 
+                           Click="RemoveSelected_Click" Margin="5" Padding="10,5" IsEnabled="False"/>
+                    <Button x:Name="ClearButton" Content="🗑 Очистить все" 
+                           Click="ClearAll_Click" Margin="5" Padding="10,5" IsEnabled="False"/>
+                </StackPanel>
+            </Grid>
+        </GroupBox>
+
+        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button x:Name="OKButton" Content="✅ Готово" Click="OKButton_Click" 
+                   Padding="15,8" Margin="5" Background="#27AE60" Foreground="White" 
+                   FontWeight="SemiBold" IsEnabled="False"/>
+            <Button x:Name="CancelButton" Content="❌ Отмена" Click="CancelButton_Click" 
+                   Padding="15,8" Margin="5" Background="#95A5A6" Foreground="White"/>
+        </StackPanel>
+    </Grid>
+</Window>

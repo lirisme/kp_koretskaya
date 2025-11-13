@@ -1,0 +1,163 @@
+﻿<Window x:Class="DrivingSchool.Views.TemplateEditDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Редактирование шаблона" 
+        WindowStartupLocation="CenterOwner"
+        SizeToContent="WidthAndHeight"
+        MinWidth="600"
+        MinHeight="500"
+        Background="White">
+
+    <Window.Resources>
+        <Style TargetType="TextBox">
+            <Setter Property="Padding" Value="8"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#BDC3C7"/>
+        </Style>
+
+        <Style TargetType="ComboBox">
+            <Setter Property="Padding" Value="8"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="#BDC3C7"/>
+        </Style>
+
+        <Style TargetType="Button">
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Margin" Value="5,0"/>
+        </Style>
+    </Window.Resources>
+
+    <Border Padding="20" Background="White">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Text="{Binding Title, RelativeSource={RelativeSource AncestorType=Window}}"
+                      FontSize="18" FontWeight="Bold" Foreground="#2C3C4D"
+                      Margin="0,0,0,20" HorizontalAlignment="Center"/>
+
+            <Grid Grid.Row="1" Margin="0,0,0,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="Название шаблона:" 
+                          VerticalAlignment="Center" FontWeight="SemiBold"/>
+                <TextBox Grid.Column="1" x:Name="TemplateNameTextBox" 
+                        Text="{Binding Template.TemplateName, UpdateSourceTrigger=PropertyChanged}"/>
+            </Grid>
+
+            <Grid Grid.Row="2" Margin="0,0,0,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="Тип документа:" 
+                          VerticalAlignment="Center" FontWeight="SemiBold"/>
+                <ComboBox Grid.Column="1" x:Name="DocumentTypeComboBox"
+                         SelectedItem="{Binding Template.DocumentType}">
+                    <ComboBoxItem Content="Договор"/>
+                    <ComboBoxItem Content="Заявление"/>
+                    <ComboBoxItem Content="Справка"/>
+                    <ComboBoxItem Content="Свидетельство"/>
+                    <ComboBoxItem Content="Уведомление"/>
+                    <ComboBoxItem Content="Другой"/>
+                </ComboBox>
+            </Grid>
+
+            <Grid Grid.Row="3" Margin="0,0,0,15">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="150"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="Файл шаблона:" 
+                          VerticalAlignment="Center" FontWeight="SemiBold"/>
+                <TextBox Grid.Column="1" x:Name="FilePathTextBox" 
+                        Text="{Binding Template.FilePath}" 
+                        IsReadOnly="True"
+                        Background="#F8F9FA"/>
+                <Button Grid.Column="2" Content="📁 Выбрать" 
+                        Click="BrowseFile_Click"
+                        Margin="10,0,0,0"
+                        Background="#3498DB" Foreground="White"/>
+            </Grid>
+
+            <Border Grid.Row="4" BorderBrush="#BDC3C7" BorderThickness="1" 
+                    Background="#F8F9FA" Margin="0,0,0,10">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Border Grid.Row="0" Background="#ECF0F1" Padding="10">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Поля для замены в шаблоне" 
+                                      FontWeight="SemiBold"/>
+                            <TextBlock Text=" (плейсхолдеры)" 
+                                      FontStyle="Italic" 
+                                      Foreground="#7F8C8D"
+                                      Margin="5,0,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <DataGrid Grid.Row="1" x:Name="PlaceholdersGrid"
+                              AutoGenerateColumns="False"
+                              ItemsSource="{Binding PlaceholdersView}"
+                              CanUserAddRows="True"
+                              CanUserDeleteRows="True"
+                              Margin="5">
+
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Плейсхолдер" 
+                                              Binding="{Binding Key}"
+                                              Width="2*"
+                                              IsReadOnly="True"/>
+                            <DataGridTextColumn Header="Описание" 
+                                              Binding="{Binding Value}"
+                                              Width="3*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </Border>
+
+            <Border Grid.Row="5" Background="#E8F4FD" BorderBrush="#3498DB" 
+                    BorderThickness="1" CornerRadius="3" Padding="10" Margin="0,0,0,15">
+                <TextBlock Text="💡 Подсказка: В вашем Word-документе используйте плейсхолдеры в фигурных скобках, например: {STUDENT_FULL_NAME}. При генерации документа они будут автоматически заменены на реальные данные."
+                          FontSize="11" Foreground="#2C3C4D" TextWrapping="Wrap"/>
+            </Border>
+
+            <Grid Grid.Row="6">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="1" x:Name="SaveButton" 
+                       Content="💾 Сохранить" 
+                       Click="SaveButton_Click"
+                       Background="#27AE60" Foreground="White"/>
+
+                <Button Grid.Column="2" x:Name="CancelButton" 
+                       Content="❌ Отмена" 
+                       Click="CancelButton_Click"
+                       Background="#95A5A6" Foreground="White"/>
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

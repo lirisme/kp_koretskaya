@@ -1,0 +1,91 @@
+﻿<Page x:Class="DrivingSchool.Views.StudentsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="Учащиеся">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Background="#F8F9FA" Padding="10" BorderBrush="#BDC3C7" BorderThickness="0,0,0,1">
+            <StackPanel Orientation="Horizontal">
+                <TextBox x:Name="SearchTextBox" Width="300" Padding="5" 
+                         TextChanged="SearchTextBox_TextChanged"
+                         ToolTip="Поиск по ФИО, телефону..."/>
+                <Button Content="Очистить" Click="ClearSearch_Click" Margin="10,0,0,0" Padding="10,5"/>
+            </StackPanel>
+        </Border>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="10" Background="White">
+            <Button Content="➕ Добавить" Click="AddStudent_Click" Margin="5" Padding="15,8" 
+                    Background="#2E86AB" Foreground="White" FontWeight="Bold"/>
+            <Button Content="✏️ Редактировать" Click="EditStudent_Click" Margin="5" Padding="15,8"
+                    Background="#A8D0E6" Foreground="#333333"/>
+            <Button Content="🗑️ Удалить" Click="DeleteStudent_Click" Margin="5" Padding="15,8"
+                    Background="#F76C6C" Foreground="White" FontWeight="Bold"/>
+
+            <Separator Margin="20,0" Width="2" Background="#BDC3C7"/>
+
+            <Button Content="🆔 Паспорт" Click="AddPassport_Click" Margin="5" Padding="15,8"
+                    Background="#4CAF50" Foreground="White" FontWeight="Bold"
+                    ToolTip="Добавить/редактировать паспортные данные"/>
+            <Button Content="📋 СНИЛС" Click="AddSNILS_Click" Margin="5" Padding="15,8"
+                    Background="#2196F3" Foreground="White" FontWeight="Bold"
+                    ToolTip="Добавить/редактировать данные СНИЛС"/>
+            <Button Content="🏥 Медсправка" Click="AddMedical_Click" Margin="5" Padding="15,8"
+                    Background="#FF9800" Foreground="White" FontWeight="Bold"
+                    ToolTip="Добавить/редактировать медицинскую справку"/>
+
+            <Separator Margin="20,0" Width="2" Background="#BDC3C7"/>
+            <Button Content="📄 Сгенерировать документ" 
+        Click="GenerateDocument_Click"
+        Padding="15,8" Margin="5,0"
+        Background="#9B59B6" Foreground="White"
+        FontWeight="SemiBold"
+        ToolTip="Сгенерировать документ для выбранного студента"/>
+            <Button Content="👁️ Просмотр" Click="ViewStudent_Click" Margin="5" Padding="15,8"/>
+            <Button Content="📊 Документы" Click="DocumentsButton_Click" Margin="5" Padding="15,8"/>
+            <Button Content="📤 Экспорт" Click="ExportStudents_Click" Margin="5" Padding="15,8"/>
+            
+        </StackPanel>
+
+        <DataGrid Grid.Row="2" x:Name="StudentsGrid" 
+                  AutoGenerateColumns="False" 
+                  CanUserAddRows="False"
+                  CanUserSortColumns="True"
+                  SelectionMode="Extended"
+                  IsReadOnly="True"
+                  Margin="10,0,10,10"
+                  SelectionChanged="StudentsGrid_SelectionChanged">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Фамилия" Binding="{Binding LastName}" Width="120"/>
+                <DataGridTextColumn Header="Имя" Binding="{Binding FirstName}" Width="120"/>
+                <DataGridTextColumn Header="Отчество" Binding="{Binding MiddleName}" Width="120"/>
+                <DataGridTextColumn Header="Телефон" Binding="{Binding Phone}" Width="120"/>
+                <DataGridTextColumn Header="Дата рождения" Binding="{Binding BirthDate, StringFormat=dd.MM.yyyy}" Width="100"/>
+                <DataGridTextColumn Header="Возраст" Binding="{Binding Age}" Width="60" IsReadOnly="True"/>
+                <DataGridTextColumn Header="Категория" Binding="{Binding CategoryCode}" Width="80"/>
+                <DataGridTextColumn Header="Группа" Binding="{Binding GroupId}" Width="80"/>
+                <DataGridTextColumn Header="Гражданство" Binding="{Binding Citizenship}" Width="130"/>
+            </DataGrid.Columns>
+
+            <DataGrid.RowStyle>
+                <Style TargetType="DataGridRow">
+                    <Setter Property="ToolTip">
+                        <Setter.Value>
+                            <TextBlock>
+                                <Run Text="ФИО: "/><Run Text="{Binding FullName}"/><LineBreak/>
+                                <Run Text="Телефон: "/><Run Text="{Binding Phone}"/><LineBreak/>
+                                <Run Text="Дата рождения: "/><Run Text="{Binding BirthDate, StringFormat=dd.MM.yyyy}"/>
+                            </TextBlock>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </DataGrid.RowStyle>
+        </DataGrid>
+    </Grid>
+</Page>
