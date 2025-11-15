@@ -41,8 +41,7 @@ namespace DrivingSchool.Services
                             Phone = "+79001234567",
                             Email = "ivanov@mail.ru",
                             Citizenship = "Российская Федерация",
-                            GroupId = 1,
-                            ContractId = 1
+                            GroupId = 1
                         },
                         new Student
                         {
@@ -56,8 +55,7 @@ namespace DrivingSchool.Services
                             Phone = "+79007654321",
                             Email = "petrova@mail.ru",
                             Citizenship = "Российская Федерация",
-                            GroupId = 1,
-                            ContractId = 2
+                            GroupId = 1
                         }
                     }
                 };
@@ -191,8 +189,6 @@ namespace DrivingSchool.Services
                 SaveData("employees.xml", initialEmployees);
             }
 
-            
-
             // vehicle_categories.xml
             string categoriesFile = Path.Combine(_dataDirectory, "vehicle_categories.xml");
             if (!File.Exists(categoriesFile))
@@ -210,8 +206,6 @@ namespace DrivingSchool.Services
                 };
                 SaveData("vehicle_categories.xml", initialCategories);
             }
-
-           
 
             // payments.xml
             string paymentsFile = Path.Combine(_dataDirectory, "payments.xml");
@@ -257,32 +251,32 @@ namespace DrivingSchool.Services
                 var initialGroups = new StudyGroupCollection
                 {
                     Groups =
-        {
-            new StudyGroup
-            {
-                Id = 1,
-                Name = "01-24",
-                StartDate = new DateTime(2024, 4, 22),
-                EndDate = new DateTime(2024, 6, 22),
-                Status = "Завершена"
-            },
-            new StudyGroup
-            {
-                Id = 2,
-                Name = "02-24",
-                StartDate = new DateTime(2024, 5, 2),
-                EndDate = new DateTime(2024, 7, 2),
-                Status = "Завершена"
-            },
-            new StudyGroup
-            {
-                Id = 3,
-                Name = "03-24",
-                StartDate = new DateTime(2024, 5, 13),
-                EndDate = new DateTime(2024, 7, 13),
-                Status = "Завершена"
-            }
-        }
+                    {
+                        new StudyGroup
+                        {
+                            Id = 1,
+                            Name = "01-24",
+                            StartDate = new DateTime(2024, 4, 22),
+                            EndDate = new DateTime(2024, 6, 22),
+                            Status = "Завершена"
+                        },
+                        new StudyGroup
+                        {
+                            Id = 2,
+                            Name = "02-24",
+                            StartDate = new DateTime(2024, 5, 2),
+                            EndDate = new DateTime(2024, 7, 2),
+                            Status = "Завершена"
+                        },
+                        new StudyGroup
+                        {
+                            Id = 3,
+                            Name = "03-24",
+                            StartDate = new DateTime(2024, 5, 13),
+                            EndDate = new DateTime(2024, 7, 13),
+                            Status = "Завершена"
+                        }
+                    }
                 };
                 SaveData("study_groups.xml", initialGroups);
             }
@@ -294,58 +288,57 @@ namespace DrivingSchool.Services
                 var initialTemplates = new DocumentTemplateCollection
                 {
                     Templates =
-            {
-                new DocumentTemplate
-                {
-                    Id = 1,
-                    TemplateName = "Договор на обучение (стандартный)",
-                    DocumentType = "Договор",
-                    FilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Договор_шаблон.docx"),
-                    CreatedDate = DateTime.Now,
-                    ModifiedDate = DateTime.Now,
-                    Placeholders = new Dictionary<string, string>
-                    {//ИСПРАВИТЬ
-                        { "{STUDENT_FULL_NAME}", "ФИО учащегося" },
-                        { "{STUDENT_BIRTH_DATE}", "Дата рождения" },
-                        { "{STUDENT_PASSPORT}", "Паспортные данные" },
-                        { "{STUDENT_ADDRESS}", "Адрес регистрации" },
-                        { "{STUDENT_PHONE}", "Телефон" },
-                        { "{CONTRACT_NUMBER}", "Номер договора" },
-                        { "{CONTRACT_DATE}", "Дата договора" },
-                        { "{TARIFF_NAME}", "Название тарифа" },
-                        { "{TARIFF_COST}", "Стоимость обучения" },
-                        { "{GROUP_NAME}", "Номер группы" },
-                        { "{START_DATE}", "Дата начала обучения" },
-                        { "{END_DATE}", "Дата окончания обучения" },
-                        { "{ORGANIZATION_NAME}", "Название организации" },
-                        { "{CURRENT_DATE}", "Текущая дата" }
-                    }
-                },
-                new DocumentTemplate
-                {
-                    Id = 2,
-                    TemplateName = "Заявление в ГИБДД",
-                    DocumentType = "Заявление",
-                    FilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Заявление_шаблон.docx"),
-                    CreatedDate = DateTime.Now,
-                    ModifiedDate = DateTime.Now,
-                    Placeholders = new Dictionary<string, string>
                     {
-                        { "{STUDENT_FULL_NAME}", "ФИО учащегося" },
-                        { "{STUDENT_BIRTH_DATE}", "Дата рождения" },
-                        { "{STUDENT_ADDRESS}", "Адрес регистрации" },
-                        { "{STUDENT_PHONE}", "Телефон" },
-                        { "{STUDENT_PASSPORT}", "Паспортные данные" },
-                        { "{MEDICAL_CERTIFICATE}", "Медицинская справка" },
-                        { "{APPLICATION_DATE}", "Дата заявления" },
-                        { "{CATEGORY}", "Категория ТС" },
-                        { "{ORGANIZATION_NAME}", "Название организации" }
+                        new DocumentTemplate
+                        {
+                            Id = 1,
+                            TemplateName = "Договор на обучение (стандартный)",
+                            DocumentType = "Договор",
+                            FilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Договор_шаблон.docx"),
+                            CreatedDate = DateTime.Now,
+                            ModifiedDate = DateTime.Now,
+                            Placeholders = new Dictionary<string, string>
+                            {
+                                { "{STUDENT_FULL_NAME}", "ФИО учащегося" },
+                                { "{STUDENT_BIRTH_DATE}", "Дата рождения" },
+                                { "{STUDENT_PASSPORT}", "Паспортные данные" },
+                                { "{STUDENT_ADDRESS}", "Адрес регистрации" },
+                                { "{STUDENT_PHONE}", "Телефон" },
+                                { "{TARIFF_NAME}", "Название тарифа" },
+                                { "{TARIFF_COST}", "Стоимость обучения" },
+                                { "{GROUP_NAME}", "Номер группы" },
+                                { "{START_DATE}", "Дата начала обучения" },
+                                { "{END_DATE}", "Дата окончания обучения" },
+                                { "{ORGANIZATION_NAME}", "Название организации" },
+                                { "{CURRENT_DATE}", "Текущая дата" }
+                            }
+                        },
+                        new DocumentTemplate
+                        {
+                            Id = 2,
+                            TemplateName = "Заявление в ГИБДД",
+                            DocumentType = "Заявление",
+                            FilePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Desktop), "Заявление_шаблон.docx"),
+                            CreatedDate = DateTime.Now,
+                            ModifiedDate = DateTime.Now,
+                            Placeholders = new Dictionary<string, string>
+                            {
+                                { "{STUDENT_FULL_NAME}", "ФИО учащегося" },
+                                { "{STUDENT_BIRTH_DATE}", "Дата рождения" },
+                                { "{STUDENT_ADDRESS}", "Адрес регистрации" },
+                                { "{STUDENT_PHONE}", "Телефон" },
+                                { "{STUDENT_PASSPORT}", "Паспортные данные" },
+                                { "{MEDICAL_CERTIFICATE}", "Медицинская справка" },
+                                { "{APPLICATION_DATE}", "Дата заявления" },
+                                { "{CATEGORY}", "Категория ТС" },
+                                { "{ORGANIZATION_NAME}", "Название организации" }
+                            }
+                        }
                     }
-                }
-            }
                 };
                 SaveData("document_templates.xml", initialTemplates);
             }
+
             InitializeEmptyFile<StudentDrivingLicenseCollection>("student_driving_licenses.xml");
             InitializeEmptyFile<StudentRegistrationAddressCollection>("student_registration_addresses.xml");
             InitializeEmptyFile<StudentCertificateCollection>("student_certificates.xml");
@@ -448,7 +441,6 @@ namespace DrivingSchool.Services
         // Методы для платежей
         public PaymentCollection LoadPayments() => LoadData<PaymentCollection>("payments.xml");
         public void SavePayments(PaymentCollection data) => SaveData("payments.xml", data);
-
 
         // Методы для водительских удостоверений
         public StudentDrivingLicenseCollection LoadDrivingLicenses() => LoadData<StudentDrivingLicenseCollection>("student_driving_licenses.xml");

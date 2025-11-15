@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows;
 
 namespace DrivingSchool.Services
@@ -202,34 +201,26 @@ namespace DrivingSchool.Services
                 data["{TotalPayments}"] = payments.Sum(p => p.Amount).ToString("N2");
                 data["{LastPaymentDate}"] = payments.Last().PaymentDate.ToString("dd.MM.yyyy");
                 data["{LastPaymentAmount}"] = payments.Last().Amount.ToString("N2");
-
-                // Первый платеж
                 data["{FirstPaymentDate}"] = payments.First().PaymentDate.ToString("dd.MM.yyyy");
                 data["{FirstPaymentAmount}"] = payments.First().Amount.ToString("N2");
             }
 
             // Тариф
-            var contract = _dataService.LoadContracts().Contracts
-                .FirstOrDefault(c => c.Id == student.ContractId);
-            if (contract != null)
+            var tariff = _dataService.LoadTariffs().Tariffs.FirstOrDefault();
+            if (tariff != null)
             {
-                var tariff = _dataService.LoadTariffs().Tariffs
-                    .FirstOrDefault(t => t.Id == contract.TariffId);
-                if (tariff != null)
-                {
-                    data["{TariffName}"] = tariff.Name;
-                    data["{TariffDescription}"] = tariff.Description;
-                    data["{TariffBaseCost}"] = tariff.BaseCost.ToString("N2");
-                    data["{TariffCategory}"] = tariff.Category;
-                    data["{TariffDuration}"] = $"{tariff.DurationMonths} мес.";
-                    data["{TariffPracticeHours}"] = tariff.PracticeHours.ToString();
-                }
+                data["{TariffName}"] = tariff.Name;
+                data["{TariffDescription}"] = tariff.Description;
+                data["{TariffBaseCost}"] = tariff.BaseCost.ToString("N2");
+                data["{TariffCategory}"] = tariff.Category;
+                data["{TariffDuration}"] = $"{tariff.DurationMonths} мес.";
+                data["{TariffPracticeHours}"] = tariff.PracticeHours.ToString();
             }
         }
 
         private void FillMultipleStudentsData(Dictionary<string, string> data, List<Student> students)
         {
-            for (int i = 0; i < students.Count && i < 50; i++) // максимум 50 студентов
+            for (int i = 0; i < students.Count && i < 50; i++)
             {
                 var student = students[i];
                 int rowNumber = i + 1;
@@ -241,7 +232,6 @@ namespace DrivingSchool.Services
                 data[$"{{BirthDate{rowNumber}}}"] = student.BirthDate.ToString("dd.MM.yyyy");
                 data[$"{{Gender{rowNumber}}}"] = student.Gender;
                 data[$"{{Citizenship{rowNumber}}}"] = student.Citizenship;
-
                 data[$"{{CertificateNumber{rowNumber}}}"] = $"ЭА-{DateTime.Now:MM}-{rowNumber:000}";
 
                 // Данные паспорта
@@ -324,6 +314,7 @@ namespace DrivingSchool.Services
 
                 foreach (var replacement in replacementData)
                 {
+                    // ВОТ ЭТУ СТРОКУ ИСПРАВИТЬ - ДОБАВИТЬ Trim('{', '}')
                     string searchText = replacement.Key.Trim('{', '}');
                     string replaceText = replacement.Value ?? "";
 
@@ -400,6 +391,7 @@ namespace DrivingSchool.Services
                 {
                     try
                     {
+                        replacementCount += ReplaceAllPlaceholdersInWorksheet(worksheet, replacementData);
                         replacementCount += FillStudentTablesAutomatically(worksheet, students);
                     }
                     catch (Exception ex)
@@ -554,7 +546,6 @@ namespace DrivingSchool.Services
                     if (headerCount >= 5)
                     {
                         Marshal.ReleaseComObject(usedRange);
-                        Console.WriteLine($"Найдена таблица в строке {row}. Заполнение начнется со строки {row + 2}");
                         return new TablePosition
                         {
                             StartRow = row + 2,
@@ -580,10 +571,10 @@ namespace DrivingSchool.Services
                 return false;
 
             string[] tableHeaders = {
-        "№", "Фамилия", "Имя", "Отчество", "Дата рождения", "Паспорт",
-        "Серия", "Номер", "Выдан", "Кем выдан", "СНИЛС", "Медсправка",
-        "Телефон", "Пол", "Гражданство", "Адрес", "Регистрация"
-    };
+                "№", "Фамилия", "Имя", "Отчество", "Дата рождения", "Паспорт",
+                "Серия", "Номер", "Выдан", "Кем выдан", "СНИЛС", "Медсправка",
+                "Телефон", "Пол", "Гражданство", "Адрес", "Регистрация"
+            };
 
             string lowerCellValue = cellValue.Trim().ToLower();
 
@@ -721,77 +712,63 @@ namespace DrivingSchool.Services
                 case "e-mail":
                 case "электронная почта":
                     return student.Email;
-
                 case "наименование документа":
                 case "документ":
                 case "тип документа":
                     return _dataService.LoadPassportData().Passports
-                                            .FirstOrDefault(p => p.StudentId == student.Id)?.DocumentType ?? "";
+                        .FirstOrDefault(p => p.StudentId == student.Id)?.DocumentType ?? "";
                 case "серия и номер паспорта":
                     var passport = _dataService.LoadPassportData().Passports
                         .FirstOrDefault(p => p.StudentId == student.Id);
                     return passport != null ? $"{passport.Series} {passport.Number}" : "";
-
                 case "страна":
-                    return "Россия";/////////!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!ПОМЕНЯТЬ
-
+                    return "Россия";
                 case "регион":
                 case "регион регистрации":
                     return _dataService.LoadAddresses().Addresses
-                                            .FirstOrDefault(a => a.StudentId == student.Id)?.Region ?? "";
+                        .FirstOrDefault(a => a.StudentId == student.Id)?.Region ?? "";
                 case "населенный пункт":
                 case "город":
                 case "поселок":
                 case "село":
                     return GetAddressComponent(student.Id, "city") ?? "";
-
                 case "улица":
                 case "проспект":
                 case "переулок":
                     return GetAddressComponent(student.Id, "street") ?? "";
-
                 case "дом":
                 case "номер дома":
                     return GetAddressComponent(student.Id, "house") ?? "";
-
                 case "корпус":
                 case "строение":
                     return GetAddressComponent(student.Id, "building") ?? "";
-
                 case "квартира":
                 case "офис":
                 case "помещение":
                     return GetAddressComponent(student.Id, "apartment") ?? "";
-
                 case "дата выдачи медсправки":
                 case "дата выдачи медицинской справки":
                     medical = _dataService.LoadMedicalData().Certificates
                         .FirstOrDefault(m => m.StudentId == student.Id);
                     return medical?.IssueDate.ToString("dd.MM.yyyy") ?? "";
-
                 case "регион выдачи":
                 case "регион выдачи медсправки":
-                    return "Оренбургская область";////////!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!ПОМЕНЯТЬ
-
+                    return "Оренбургская область";
                 case "наименование мед.учреждения":
                 case "медицинское учреждение":
                 case "мед. учреждение":
                     medical = _dataService.LoadMedicalData().Certificates
                         .FirstOrDefault(m => m.StudentId == student.Id);
                     return medical?.MedicalInstitution ?? "";
-
                 case "серия и номер водительского удостоверения":
                 case "водительское удостоверение":
                 case "удостоверение":
                     return "";
-
                 case "категории":
                 case "категории (подкатегории)":
-                    return "B";////////!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!ПОМЕНЯТЬ
-
+                    return "B";
                 case "стаж":
                     return "";
-
                 default:
                     Console.WriteLine($"Неизвестный заголовок столбца: {columnName}");
                     return null;
@@ -839,8 +816,6 @@ namespace DrivingSchool.Services
             else
                 return gender;
         }
-
-        
 
         private Dictionary<string, int> MapTableColumns(dynamic worksheet, int headerRow)
         {
