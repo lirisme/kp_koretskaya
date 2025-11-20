@@ -314,7 +314,6 @@ namespace DrivingSchool.Services
 
                 foreach (var replacement in replacementData)
                 {
-                    // ВОТ ЭТУ СТРОКУ ИСПРАВИТЬ - ДОБАВИТЬ Trim('{', '}')
                     string searchText = replacement.Key.Trim('{', '}');
                     string replaceText = replacement.Value ?? "";
 

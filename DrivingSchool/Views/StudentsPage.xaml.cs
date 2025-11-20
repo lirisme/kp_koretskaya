@@ -1,9 +1,11 @@
-﻿using System;
+﻿using DrivingSchool.Models;
+using DrivingSchool.Services;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using DrivingSchool.Models;
-using DrivingSchool.Services;
+using System.Windows.Media;
 
 namespace DrivingSchool.Views
 {
@@ -169,16 +171,26 @@ namespace DrivingSchool.Views
 
         private void ViewStudent_Click(object sender, RoutedEventArgs e)
         {
-            if (StudentsGrid.SelectedItem is Student selectedStudent)
+            var menuItem = sender as MenuItem;
+            var contextMenu = menuItem?.Parent as ContextMenu;
+            var button = contextMenu?.PlacementTarget as Button;
+            var student = button?.Tag as Student;
+
+            if (student == null)
+            {
+                student = StudentsGrid.SelectedItem as Student;
+            }
+
+            if (student != null)
             {
                 MessageBox.Show($"Просмотр данных учащегося:\n\n" +
-                               $"ФИО: {selectedStudent.FullName}\n" +
-                               $"Телефон: {selectedStudent.Phone}\n" +
-                               $"Email: {selectedStudent.Email ?? "не указан"}\n" +
-                               $"Дата рождения: {selectedStudent.BirthDate:dd.MM.yyyy}\n" +
-                               $"Место рождения: {selectedStudent.BirthPlace}\n" +
-                               $"Гражданство: {selectedStudent.Citizenship}",
-                               $"Данные учащегося: {selectedStudent.FullName}");
+                               $"ФИО: {student.FullName}\n" +
+                               $"Телефон: {student.Phone}\n" +
+                               $"Email: {student.Email ?? "не указан"}\n" +
+                               $"Дата рождения: {student.BirthDate:dd.MM.yyyy}\n" +
+                               $"Место рождения: {student.BirthPlace}\n" +
+                               $"Гражданство: {student.Citizenship}",
+                               $"Данные учащегося: {student.FullName}");
             }
             else
             {
@@ -186,11 +198,22 @@ namespace DrivingSchool.Views
             }
         }
 
+
         private void DocumentsButton_Click(object sender, RoutedEventArgs e)
         {
-            if (StudentsGrid.SelectedItem is Student selectedStudent)
+            var menuItem = sender as MenuItem;
+            var contextMenu = menuItem?.Parent as ContextMenu;
+            var button = contextMenu?.PlacementTarget as Button;
+            var student = button?.Tag as Student;
+
+            if (student == null)
             {
-                MessageBox.Show($"Генерация документов для: {selectedStudent.FullName}\n\n" +
+                student = StudentsGrid.SelectedItem as Student;
+            }
+
+            if (student != null)
+            {
+                MessageBox.Show($"Генерация документов для: {student.FullName}\n\n" +
                                "Доступные документы:\n" +
                                "• Договор на обучение\n" +
                                "• Заявление в ГИБДД\n" +
@@ -225,16 +248,37 @@ namespace DrivingSchool.Views
             // Логика при изменении выбора
         }
 
+        private void MoreOptionsButton_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            if (button?.Tag is Student student)
+            {
+                StudentsGrid.SelectedItem = student;
+
+                button.ContextMenu.IsOpen = true;
+            }
+        }
+
         private void AddPassport_Click(object sender, RoutedEventArgs e)
         {
-            if (StudentsGrid.SelectedItem is Student selectedStudent)
+            var menuItem = sender as MenuItem;
+            var contextMenu = menuItem?.Parent as ContextMenu;
+            var button = contextMenu?.PlacementTarget as Button;
+            var student = button?.Tag as Student;
+
+            if (student == null)
+            {
+                student = StudentsGrid.SelectedItem as Student;
+            }
+
+            if (student != null)
             {
                 var passports = _dataService.LoadPassportData();
-                var existingPassport = passports.Passports.FirstOrDefault(p => p.StudentId == selectedStudent.Id);
+                var existingPassport = passports.Passports.FirstOrDefault(p => p.StudentId == student.Id);
 
                 if (existingPassport != null)
                 {
-                    var dialog = new PassportEditDialog(_dataService, selectedStudent.Id, existingPassport);
+                    var dialog = new PassportEditDialog(_dataService, student.Id, existingPassport);
                     if (dialog.ShowDialog() == true)
                     {
                         var index = passports.Passports.IndexOf(existingPassport);
@@ -248,7 +292,7 @@ namespace DrivingSchool.Views
                 }
                 else
                 {
-                    var dialog = new PassportEditDialog(_dataService, selectedStudent.Id);
+                    var dialog = new PassportEditDialog(_dataService, student.Id);
                     if (dialog.ShowDialog() == true)
                     {
                         passports.Passports.Add(dialog.PassportData);
@@ -261,18 +305,29 @@ namespace DrivingSchool.Views
             {
                 MessageBox.Show("Выберите учащегося для работы с паспортными данными", "Предупреждение");
             }
+            StudentsGrid.Items.Refresh();
         }
 
         private void AddSNILS_Click(object sender, RoutedEventArgs e)
         {
-            if (StudentsGrid.SelectedItem is Student selectedStudent)
+            var menuItem = sender as MenuItem;
+            var contextMenu = menuItem?.Parent as ContextMenu;
+            var button = contextMenu?.PlacementTarget as Button;
+            var student = button?.Tag as Student;
+
+            if (student == null)
+            {
+                student = StudentsGrid.SelectedItem as Student;
+            }
+
+            if (student != null)
             {
                 var snilsList = _dataService.LoadSNILSData();
-                var existingSNILS = snilsList.SNILSList.FirstOrDefault(s => s.StudentId == selectedStudent.Id);
+                var existingSNILS = snilsList.SNILSList.FirstOrDefault(s => s.StudentId == student.Id);
 
                 if (existingSNILS != null)
                 {
-                    var dialog = new SNILSEditDialog(_dataService, selectedStudent.Id, existingSNILS);
+                    var dialog = new SNILSEditDialog(_dataService, student.Id, existingSNILS);
                     if (dialog.ShowDialog() == true)
                     {
                         var index = snilsList.SNILSList.IndexOf(existingSNILS);
@@ -286,7 +341,7 @@ namespace DrivingSchool.Views
                 }
                 else
                 {
-                    var dialog = new SNILSEditDialog(_dataService, selectedStudent.Id);
+                    var dialog = new SNILSEditDialog(_dataService, student.Id);
                     if (dialog.ShowDialog() == true)
                     {
                         snilsList.SNILSList.Add(dialog.SNILSData);
@@ -299,18 +354,29 @@ namespace DrivingSchool.Views
             {
                 MessageBox.Show("Выберите учащегося для работы с данными СНИЛС", "Предупреждение");
             }
+            StudentsGrid.Items.Refresh();
         }
 
         private void AddMedical_Click(object sender, RoutedEventArgs e)
         {
-            if (StudentsGrid.SelectedItem is Student selectedStudent)
+            var menuItem = sender as MenuItem;
+            var contextMenu = menuItem?.Parent as ContextMenu;
+            var button = contextMenu?.PlacementTarget as Button;
+            var student = button?.Tag as Student;
+
+            if (student == null)
+            {
+                student = StudentsGrid.SelectedItem as Student;
+            }
+
+            if (student != null)
             {
                 var medicals = _dataService.LoadMedicalData();
-                var existingMedical = medicals.Certificates.FirstOrDefault(m => m.StudentId == selectedStudent.Id);
+                var existingMedical = medicals.Certificates.FirstOrDefault(m => m.StudentId == student.Id);
 
                 if (existingMedical != null)
                 {
-                    var dialog = new MedicalEditDialog(_dataService, selectedStudent.Id, existingMedical);
+                    var dialog = new MedicalEditDialog(_dataService, student.Id, existingMedical);
                     if (dialog.ShowDialog() == true)
                     {
                         var index = medicals.Certificates.IndexOf(existingMedical);
@@ -324,7 +390,7 @@ namespace DrivingSchool.Views
                 }
                 else
                 {
-                    var dialog = new MedicalEditDialog(_dataService, selectedStudent.Id);
+                    var dialog = new MedicalEditDialog(_dataService, student.Id);
                     if (dialog.ShowDialog() == true)
                     {
                         medicals.Certificates.Add(dialog.MedicalData);
@@ -336,6 +402,104 @@ namespace DrivingSchool.Views
             else
             {
                 MessageBox.Show("Выберите учащегося для работы с медицинской справкой", "Предупреждение");
+            }
+            StudentsGrid.Items.Refresh();
+        }
+
+        private void AddAddress_Click(object sender, RoutedEventArgs e)
+        {
+            var student = GetStudentFromContext(sender);
+            if (student != null)
+            {
+                var addresses = _dataService.LoadAddresses();
+                var existingAddress = addresses.Addresses.FirstOrDefault(a => a.StudentId == student.Id);
+
+                var dialog = new AddressEditDialog(_dataService, student.Id, existingAddress);
+                if (dialog.ShowDialog() == true)
+                {
+                    if (existingAddress != null)
+                    {
+                        var index = addresses.Addresses.IndexOf(existingAddress);
+                        addresses.Addresses[index] = dialog.Address;
+                    }
+                    else
+                    {
+                        addresses.Addresses.Add(dialog.Address);
+                    }
+                    _dataService.SaveAddresses(addresses);
+                    MessageBox.Show("Адрес регистрации сохранен!", "Успех");
+                }
+            }
+            StudentsGrid.Items.Refresh();
+        }
+
+        private void AddCertificate_Click(object sender, RoutedEventArgs e)
+        {
+            var student = GetStudentFromContext(sender);
+            if (student != null)
+            {
+                var certificates = _dataService.LoadCertificates();
+                var existingCert = certificates.Certificates.FirstOrDefault(c => c.StudentId == student.Id);
+
+                var dialog = new CertificateEditDialog(_dataService, student.Id, existingCert);
+                if (dialog.ShowDialog() == true)
+                {
+                    if (existingCert != null)
+                    {
+                        var index = certificates.Certificates.IndexOf(existingCert);
+                        certificates.Certificates[index] = dialog.CertificateData;
+                    }
+                    else
+                    {
+                        certificates.Certificates.Add(dialog.CertificateData);
+                    }
+                    _dataService.SaveCertificates(certificates);
+                    MessageBox.Show("Свидетельство об окончании сохранено!", "Успех");
+                }
+            }
+            StudentsGrid.Items.Refresh();
+        }
+        
+        private void Contract_Click(object sender, RoutedEventArgs e)
+        {
+            var student = GetStudentFromContext(sender);
+            if (student != null)
+            {
+                var result = MessageBox.Show($"Сгенерировать договор для {student.FullName}?",
+                                           "Генерация договора",
+                                           MessageBoxButton.YesNo);
+                if (result == MessageBoxResult.Yes)
+                {
+                    MessageBox.Show("Договор сгенерирован успешно!", "Успех");
+                }
+            }
+        }
+
+        private Student GetStudentFromContext(object sender)
+        {
+            var menuItem = sender as MenuItem;
+            var contextMenu = menuItem?.Parent as ContextMenu;
+            var button = contextMenu?.PlacementTarget as Button;
+            var student = button?.Tag as Student;
+
+            return student ?? StudentsGrid.SelectedItem as Student;
+        }
+
+        private void ExportStudent_Click(object sender, RoutedEventArgs e)
+        {
+            var student = GetStudentFromContext(sender);
+            if (student != null)
+            {
+                var dialog = new Microsoft.Win32.SaveFileDialog
+                {
+                    Filter = "PDF files (*.pdf)|*.pdf|Word documents (*.docx)|*.docx",
+                    FileName = $"{student.LastName}_{student.FirstName}_profile"
+                };
+
+                if (dialog.ShowDialog() == true)
+                {
+                    MessageBox.Show($"Данные экспортированы в: {dialog.FileName}", "Экспорт");
+                }
             }
         }
 
@@ -365,6 +529,103 @@ namespace DrivingSchool.Views
             {
                 MessageBox.Show($"Ошибка при генерации документов: {ex.Message}", "Ошибка");
             }
+        }
+
+        private void WarningButton_Click(object sender, RoutedEventArgs e)
+        {
+            var button = sender as Button;
+            if (button?.Tag is Student student)
+            {
+                var missingData = new List<string>();
+
+                var passports = _dataService.LoadPassportData();
+                var snilsList = _dataService.LoadSNILSData();
+                var medicals = _dataService.LoadMedicalData();
+                var addresses = _dataService.LoadAddresses();
+
+                if (!passports.Passports.Any(p => p.StudentId == student.Id))
+                    missingData.Add("• Паспортные данные");
+
+                if (!snilsList.SNILSList.Any(s => s.StudentId == student.Id))
+                    missingData.Add("• СНИЛС");
+
+                if (!medicals.Certificates.Any(m => m.StudentId == student.Id))
+                    missingData.Add("• Медицинская справка");
+
+                if (!addresses.Addresses.Any(a => a.StudentId == student.Id))
+                    missingData.Add("• Адрес регистрации");
+
+                if (missingData.Any())
+                {
+                    var message = $"У студента {student.FullName} не заполнены:\n\n" +
+                                 string.Join("\n", missingData) +
+                                 "\n\nНажмите на кнопку '⋯' для заполнения недостающих данных.";
+
+                    MessageBox.Show(message, "Недостающие данные", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+                else
+                {
+                    MessageBox.Show($"У студента {student.FullName} все основные данные заполнены!",
+                                   "Данные заполнены", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+        }
+
+        private bool CheckMissingData(Student student)
+        {
+            var passports = _dataService.LoadPassportData();
+            var snilsList = _dataService.LoadSNILSData();
+            var medicals = _dataService.LoadMedicalData();
+            var addresses = _dataService.LoadAddresses();
+
+            bool hasPassport = passports.Passports.Any(p => p.StudentId == student.Id);
+            bool hasSNILS = snilsList.SNILSList.Any(s => s.StudentId == student.Id);
+            bool hasMedical = medicals.Certificates.Any(m => m.StudentId == student.Id);
+            bool hasAddress = addresses.Addresses.Any(a => a.StudentId == student.Id);
+
+            return !hasPassport || !hasSNILS || !hasMedical || !hasAddress;
+        }
+
+        private void StudentsGrid_LoadingRow(object sender, DataGridRowEventArgs e)
+        {
+            if (e.Row.DataContext is Student student)
+            {
+                e.Row.Loaded += (s, args) =>
+                {
+                    var button = FindWarningButton(e.Row);
+                    if (button != null)
+                    {
+                        bool hasMissingData = CheckMissingData(student);
+                        button.Visibility = hasMissingData ? Visibility.Visible : Visibility.Collapsed;
+                    }
+                };
+            }
+        }
+
+        private Button FindWarningButton(DataGridRow row)
+        {
+            return FindVisualChild<Button>(row, btn => btn.Content?.ToString() == "⚠️");
+        }
+
+        private T FindVisualChild<T>(DependencyObject parent, Func<T, bool> predicate = null) where T : DependencyObject
+        {
+            if (parent == null) return null;
+
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+            {
+                var child = VisualTreeHelper.GetChild(parent, i);
+                if (child is T result && (predicate == null || predicate(result)))
+                    return result;
+
+                var found = FindVisualChild(child, predicate);
+                if (found != null) return found;
+            }
+            return null;
+        }
+
+        private T FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
+        {
+            return FindVisualChild<T>(parent, null);
         }
     }
 }

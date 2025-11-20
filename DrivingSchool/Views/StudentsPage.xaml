@@ -29,27 +29,13 @@
 
             <Separator Margin="20,0" Width="2" Background="#BDC3C7"/>
 
-            <Button Content="🆔 Паспорт" Click="AddPassport_Click" Margin="5" Padding="15,8"
-                    Background="#4CAF50" Foreground="White" FontWeight="Bold"
-                    ToolTip="Добавить/редактировать паспортные данные"/>
-            <Button Content="📋 СНИЛС" Click="AddSNILS_Click" Margin="5" Padding="15,8"
-                    Background="#2196F3" Foreground="White" FontWeight="Bold"
-                    ToolTip="Добавить/редактировать данные СНИЛС"/>
-            <Button Content="🏥 Медсправка" Click="AddMedical_Click" Margin="5" Padding="15,8"
-                    Background="#FF9800" Foreground="White" FontWeight="Bold"
-                    ToolTip="Добавить/редактировать медицинскую справку"/>
-
-            <Separator Margin="20,0" Width="2" Background="#BDC3C7"/>
             <Button Content="📄 Сгенерировать документ" 
-        Click="GenerateDocument_Click"
-        Padding="15,8" Margin="5,0"
-        Background="#9B59B6" Foreground="White"
-        FontWeight="SemiBold"
-        ToolTip="Сгенерировать документ для выбранного студента"/>
-            <Button Content="👁️ Просмотр" Click="ViewStudent_Click" Margin="5" Padding="15,8"/>
-            <Button Content="📊 Документы" Click="DocumentsButton_Click" Margin="5" Padding="15,8"/>
+                    Click="GenerateDocument_Click"
+                    Padding="15,8" Margin="5,0"
+                    Background="#9B59B6" Foreground="White"
+                    FontWeight="SemiBold"
+                    ToolTip="Сгенерировать документ для выбранного студента"/>
             <Button Content="📤 Экспорт" Click="ExportStudents_Click" Margin="5" Padding="15,8"/>
-            
         </StackPanel>
 
         <DataGrid Grid.Row="2" x:Name="StudentsGrid" 
@@ -59,9 +45,51 @@
                   SelectionMode="Extended"
                   IsReadOnly="True"
                   Margin="10,0,10,10"
-                  SelectionChanged="StudentsGrid_SelectionChanged">
+                  SelectionChanged="StudentsGrid_SelectionChanged"
+                  LoadingRow="StudentsGrid_LoadingRow">
+
             <DataGrid.Columns>
-                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50" IsReadOnly="True"/>
+                <DataGridTemplateColumn Header="" Width="40">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="⋯" 
+                            Click="MoreOptionsButton_Click"
+                            Padding="5,2"
+                            FontSize="12"
+                            FontWeight="Bold"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            ToolTip="Дополнительные действия"
+                            Tag="{Binding}">    
+                                <Button.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Header="🆔 Паспортные данные" Click="AddPassport_Click"/>
+                                        <MenuItem Header="📋 СНИЛС" Click="AddSNILS_Click"/>
+                                        <MenuItem Header="🏥 Медицинская справка" Click="AddMedical_Click"/>
+                                        <MenuItem Header="🏠 Адрес регистрации" Click="AddAddress_Click"/>
+                                        <MenuItem Header="🎓 Свидетельство об окончании" Click="AddCertificate_Click"/>
+                                        <Separator/>
+
+                                        <MenuItem Header="📄 Договор" Click="Contract_Click"/>
+
+                                        <Separator/>
+
+                                        <MenuItem Header="👁️ Просмотр данных" Click="ViewStudent_Click"/>
+                                        <MenuItem Header="📤 Экспорт данных" Click="ExportStudent_Click"/>
+
+                                        <Separator/>
+
+                                        <MenuItem Header="⚙️ Дополнительно">
+                                           <!-- <MenuItem Header="🚪 Отчислить" Click="ExpelStudent_Click"/> -->
+                                        </MenuItem>
+                                    </ContextMenu>
+                                </Button.ContextMenu>
+                            </Button>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+
+                
                 <DataGridTextColumn Header="Фамилия" Binding="{Binding LastName}" Width="120"/>
                 <DataGridTextColumn Header="Имя" Binding="{Binding FirstName}" Width="120"/>
                 <DataGridTextColumn Header="Отчество" Binding="{Binding MiddleName}" Width="120"/>
@@ -71,6 +99,22 @@
                 <DataGridTextColumn Header="Категория" Binding="{Binding CategoryCode}" Width="80"/>
                 <DataGridTextColumn Header="Группа" Binding="{Binding GroupId}" Width="80"/>
                 <DataGridTextColumn Header="Гражданство" Binding="{Binding Citizenship}" Width="130"/>
+
+                <DataGridTemplateColumn Header="" Width="30">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Button Content="⚠️"
+                    Click="WarningButton_Click"
+                    Padding="2"
+                    FontSize="10"
+                    Background="Transparent"
+                    BorderThickness="0"
+                    ToolTip="Показать недостающие данные"
+                    Tag="{Binding}">
+                            </Button>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
 
             <DataGrid.RowStyle>
