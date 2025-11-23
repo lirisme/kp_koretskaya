@@ -89,9 +89,6 @@
     <Compile Include="Views\ContractsPage.xaml.cs">
       <DependentUpon>ContractsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\DashboardPage.xaml.cs">
-      <DependentUpon>DashboardPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\DrivingLicenseDataPage.xaml.cs">
       <DependentUpon>DrivingLicenseDataPage.xaml</DependentUpon>
     </Compile>
@@ -104,8 +101,8 @@
     <Compile Include="Views\EmployeesPage.xaml.cs">
       <DependentUpon>EmployeesPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\GIBDDApplicationsPage.xaml.cs">
-      <DependentUpon>GIBDDApplicationsPage.xaml</DependentUpon>
+    <Compile Include="Views\FinancialReportsPage.xaml.cs">
+      <DependentUpon>FinancialReportsPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\GroupEditDialog.xaml.cs">
       <DependentUpon>GroupEditDialog.xaml</DependentUpon>
@@ -203,10 +200,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\DashboardPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\DrivingLicenseDataPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -223,7 +216,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\GIBDDApplicationsPage.xaml">
+    <Page Include="Views\FinancialReportsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

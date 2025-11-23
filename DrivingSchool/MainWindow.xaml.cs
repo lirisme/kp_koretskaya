@@ -129,11 +129,6 @@ namespace DrivingSchool
             }
         }
 
-        private void FinancialReports_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show("Раздел 'Финансовые отчеты' в разработке");
-        }
-
         private void DebtsReport_Click(object sender, RoutedEventArgs e)
         {
             MessageBox.Show("Раздел 'Ведомость по задолженностям' в разработке");
@@ -387,6 +382,25 @@ namespace DrivingSchool
             catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка загрузки водительских удостоверений: {ex.Message}", "Ошибка");
+            }
+        }
+
+        private void FinancialReports_Click(object sender, RoutedEventArgs e)
+        {
+            ShowFinancialReports();
+        }
+
+        private void ShowFinancialReports()
+        {
+            try
+            {
+                var reportsPage = new Views.FinancialReportsPage(_dataService);
+                MainContentFrame.Navigate(reportsPage);
+                StatusText.Text = "Финансовые отчеты";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка загрузки финансовых отчетов: {ex.Message}", "Ошибка");
             }
         }
     }
