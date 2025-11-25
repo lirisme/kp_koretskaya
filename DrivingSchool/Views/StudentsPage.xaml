@@ -68,6 +68,7 @@
                                         <MenuItem Header="🏥 Медицинская справка" Click="AddMedical_Click"/>
                                         <MenuItem Header="🏠 Адрес регистрации" Click="AddAddress_Click"/>
                                         <MenuItem Header="🎓 Свидетельство об окончании" Click="AddCertificate_Click"/>
+                                        <MenuItem Header="💰 Стоимость обучения" Click="AddTuition_Click"/>
                                         <Separator/>
 
                                         <MenuItem Header="📄 Договор" Click="Contract_Click"/>

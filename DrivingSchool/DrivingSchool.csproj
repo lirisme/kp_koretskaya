@@ -115,6 +115,9 @@
       <DependentUpon>PaymentEditDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Models\StudentTuition.cs" />
+    <Compile Include="Views\StudentReportsPage.xaml.cs">
+      <DependentUpon>StudentReportsPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\StudentSelectionDialog.xaml.cs">
       <DependentUpon>StudentSelectionDialog.xaml</DependentUpon>
     </Compile>
@@ -244,6 +247,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Views\PaymentEditDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\StudentReportsPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

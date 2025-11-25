@@ -31,7 +31,8 @@ namespace DrivingSchool.Views
                     Id = GetNextStudentId(),
                     BirthDate = DateTime.Now.AddYears(-18),
                     Citizenship = "Российская Федерация",
-                    VehicleCategoryId = 2 
+                    VehicleCategoryId = 2,
+                    Gender = "Мужской"
                 };
                 _isEditMode = false;
                 Title = "Добавление учащегося";
@@ -129,6 +130,8 @@ namespace DrivingSchool.Views
                     GenderComboBox.SelectedIndex = 0;
                 else if (Student.Gender == "Женский")
                     GenderComboBox.SelectedIndex = 1;
+                else
+                    GenderComboBox.SelectedIndex = 0;
             }
             else
             {
@@ -141,6 +144,10 @@ namespace DrivingSchool.Views
             if (GenderComboBox.SelectedItem is ComboBoxItem genderItem)
             {
                 Student.Gender = genderItem.Content.ToString();
+            }
+            else
+            {
+                Student.Gender = "Мужской";
             }
 
             if (string.IsNullOrWhiteSpace(Student.LastName) ||
@@ -171,6 +178,8 @@ namespace DrivingSchool.Views
                 dynamic selectedGroup = GroupComboBox.SelectedItem;
                 Student.GroupId = selectedGroup.Id;
             }
+
+            Student.VehicleCategoryId = (int)CategoryComboBox.SelectedValue;
 
             DialogResult = true;
             Close();

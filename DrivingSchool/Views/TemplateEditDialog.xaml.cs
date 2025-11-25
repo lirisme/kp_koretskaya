@@ -302,5 +302,30 @@ namespace DrivingSchool.Views
                 }
             }
         }
+
+        private string GetDocumentTypeFromName(string fileName)
+        {
+            string lowerName = fileName.ToLower();
+
+            if (lowerName.Contains("договор"))
+            {
+                if (lowerName.Contains("категория а") || lowerName.Contains("кат. а") || lowerName.Contains("договор а"))
+                    return "Договор категория A";
+                else if (lowerName.Contains("категория b") || lowerName.Contains("кат. b") || lowerName.Contains("договор b"))
+                    return "Договор категория B";
+                else if (lowerName.Contains("категория c") || lowerName.Contains("кат. c") || lowerName.Contains("договор c"))
+                    return "Договор категория C";
+                else if (lowerName.Contains("категория d") || lowerName.Contains("кат. d") || lowerName.Contains("договор d"))
+                    return "Договор категория D";
+                else if (lowerName.Contains("категория m") || lowerName.Contains("кат. m") || lowerName.Contains("договор m"))
+                    return "Договор категория M";
+                else
+                    return "Договор";
+            }
+            if (lowerName.Contains("заявление")) return "Заявление";
+            if (lowerName.Contains("справка")) return "Справка";
+            if (lowerName.Contains("свидетельство")) return "Свидетельство";
+            return "Другой";
+        }
     }
 }

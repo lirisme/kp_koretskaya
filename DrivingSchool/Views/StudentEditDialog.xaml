@@ -57,8 +57,7 @@
                         <TextBox Grid.Row="3" Grid.Column="0" x:Name="MiddleNameTextBox" Text="{Binding MiddleName}"/>
 
                         <TextBlock Grid.Row="2" Grid.Column="1" Text="Пол*" Margin="5,10,5,0"/>
-                        <ComboBox Grid.Row="3" Grid.Column="1" x:Name="GenderComboBox" 
-                                  SelectedItem="{Binding Gender}">
+                        <ComboBox Grid.Row="3" Grid.Column="1" x:Name="GenderComboBox">
                             <ComboBoxItem Content="Мужской"/>
                             <ComboBoxItem Content="Женский"/>
                         </ComboBox>

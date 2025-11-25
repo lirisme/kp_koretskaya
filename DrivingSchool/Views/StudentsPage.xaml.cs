@@ -460,21 +460,6 @@ namespace DrivingSchool.Views
             StudentsGrid.Items.Refresh();
         }
         
-        private void Contract_Click(object sender, RoutedEventArgs e)
-        {
-            var student = GetStudentFromContext(sender);
-            if (student != null)
-            {
-                var result = MessageBox.Show($"Сгенерировать договор для {student.FullName}?",
-                                           "Генерация договора",
-                                           MessageBoxButton.YesNo);
-                if (result == MessageBoxResult.Yes)
-                {
-                    MessageBox.Show("Договор сгенерирован успешно!", "Успех");
-                }
-            }
-        }
-
         private Student GetStudentFromContext(object sender)
         {
             var menuItem = sender as MenuItem;
@@ -542,6 +527,7 @@ namespace DrivingSchool.Views
                 var snilsList = _dataService.LoadSNILSData();
                 var medicals = _dataService.LoadMedicalData();
                 var addresses = _dataService.LoadAddresses();
+                var tuitions = _dataService.LoadStudentTuitions();
 
                 if (!passports.Passports.Any(p => p.StudentId == student.Id))
                     missingData.Add("• Паспортные данные");
@@ -555,18 +541,35 @@ namespace DrivingSchool.Views
                 if (!addresses.Addresses.Any(a => a.StudentId == student.Id))
                     missingData.Add("• Адрес регистрации");
 
+                if (!tuitions.Tuitions.Any(t => t.StudentId == student.Id))
+                    missingData.Add("• Стоимость обучения");
+
+                bool canGenerateContract = CheckContractData(student);
+
                 if (missingData.Any())
                 {
                     var message = $"У студента {student.FullName} не заполнены:\n\n" +
-                                 string.Join("\n", missingData) +
-                                 "\n\nНажмите на кнопку '⋯' для заполнения недостающих данных.";
+                                 string.Join("\n", missingData);
+
+                    if (!canGenerateContract)
+                    {
+                        message += "\n\n⚠️ Нельзя сгенерировать договор (требуются паспортные данные и стоимость обучения)";
+                    }
+
+                    message += "\n\nНажмите на кнопку '⋯' для заполнения недостающих данных.";
 
                     MessageBox.Show(message, "Недостающие данные", MessageBoxButton.OK, MessageBoxImage.Warning);
                 }
                 else
                 {
-                    MessageBox.Show($"У студента {student.FullName} все основные данные заполнены!",
-                                   "Данные заполнены", MessageBoxButton.OK, MessageBoxImage.Information);
+                    var tuition = tuitions.Tuitions.First(t => t.StudentId == student.Id);
+                    var message = $"У студента {student.FullName} все основные данные заполнены!\n\n" +
+                                 $"Стоимость обучения: {tuition.FinalAmount:N2} руб.\n" +
+                                 $"Полная стоимость: {tuition.FullAmount:N2} руб.\n" +
+                                 $"Скидка: {tuition.Discount:N2} руб.\n\n" +
+                                 $"✅ Можно генерировать договор";
+
+                    MessageBox.Show(message, "Данные заполнены", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
         }
@@ -577,13 +580,15 @@ namespace DrivingSchool.Views
             var snilsList = _dataService.LoadSNILSData();
             var medicals = _dataService.LoadMedicalData();
             var addresses = _dataService.LoadAddresses();
+            var tuitions = _dataService.LoadStudentTuitions();
 
             bool hasPassport = passports.Passports.Any(p => p.StudentId == student.Id);
             bool hasSNILS = snilsList.SNILSList.Any(s => s.StudentId == student.Id);
             bool hasMedical = medicals.Certificates.Any(m => m.StudentId == student.Id);
             bool hasAddress = addresses.Addresses.Any(a => a.StudentId == student.Id);
+            bool hasTuition = tuitions.Tuitions.Any(t => t.StudentId == student.Id);
 
-            return !hasPassport || !hasSNILS || !hasMedical || !hasAddress;
+            return !hasPassport || !hasSNILS || !hasMedical || !hasAddress || !hasTuition;
         }
 
         private void StudentsGrid_LoadingRow(object sender, DataGridRowEventArgs e)
@@ -626,6 +631,242 @@ namespace DrivingSchool.Views
         private T FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
         {
             return FindVisualChild<T>(parent, null);
+        }
+
+        private void AddTuition_Click(object sender, RoutedEventArgs e)
+        {
+            var student = GetStudentFromContext(sender);
+            if (student != null)
+            {
+                var tuitions = _dataService.LoadStudentTuitions();
+                var existingTuition = tuitions.Tuitions.FirstOrDefault(t => t.StudentId == student.Id);
+
+                var dialog = new TuitionEditDialog(_dataService, student.Id, existingTuition);
+                if (dialog.ShowDialog() == true)
+                {
+                    if (existingTuition != null)
+                    {
+                        var index = tuitions.Tuitions.IndexOf(existingTuition);
+                        tuitions.Tuitions[index] = dialog.TuitionData;
+                    }
+                    else
+                    {
+                        tuitions.Tuitions.Add(dialog.TuitionData);
+                    }
+                    _dataService.SaveStudentTuitions(tuitions);
+                    MessageBox.Show("Стоимость обучения сохранена!", "Успех");
+                }
+            }
+            StudentsGrid.Items.Refresh();
+        }
+
+        private void Contract_Click(object sender, RoutedEventArgs e)
+        {
+            var student = GetStudentFromContext(sender);
+            if (student != null)
+            {
+                var passports = _dataService.LoadPassportData();
+                var hasPassport = passports.Passports.Any(p => p.StudentId == student.Id);
+
+                if (!hasPassport)
+                {
+                    MessageBox.Show($"Для генерации договора необходимо заполнить паспортные данные студента {student.FullName}",
+                                   "Недостающие данные", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                var tuitions = _dataService.LoadStudentTuitions();
+                var hasTuition = tuitions.Tuitions.Any(t => t.StudentId == student.Id);
+
+                if (!hasTuition)
+                {
+                    MessageBox.Show($"Для генерации договора необходимо установить стоимость обучения для студента {student.FullName}",
+                                   "Недостающие данные", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                var categories = _dataService.LoadVehicleCategories();
+                var studentCategory = categories.Categories.FirstOrDefault(c => c.Id == student.VehicleCategoryId);
+                string categoryInfo = studentCategory != null ?
+                    $"{studentCategory.Code} - {studentCategory.FullName}" : "Категория не указана";
+
+                var passport = passports.Passports.First(p => p.StudentId == student.Id);
+                var tuition = tuitions.Tuitions.First(t => t.StudentId == student.Id);
+
+                var templates = _dataService.LoadTemplates();
+                var contractTemplate = FindContractTemplateByCategory(templates, studentCategory?.Code ?? "B");
+
+                if (contractTemplate == null)
+                {
+                    MessageBox.Show($"Не найден шаблон договора для категории {studentCategory?.Code ?? "B"}. Пожалуйста, добавьте соответствующий шаблон.",
+                                   "Шаблон не найден", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                var confirmationMessage = $"Будет сгенерирован договор для:\n\n" +
+                                         $"Студент: {student.FullName}\n" +
+                                         $"Категория: {categoryInfo}\n" +
+                                         $"Паспорт: {passport.Series} {passport.Number}\n" +
+                                         $"Стоимость обучения: {tuition.FinalAmount:N2} руб.\n" +
+                                         $"Шаблон: {contractTemplate.TemplateName}\n\n" +
+                                         $"Продолжить?";
+
+                var result = MessageBox.Show(confirmationMessage, "Генерация договора",
+                                           MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    GenerateContractForStudent(student);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Выберите студента для генерации договора", "Предупреждение");
+            }
+        }
+
+        private void GenerateContractForStudent(Student student)
+        {
+            try
+            {
+                var templates = _dataService.LoadTemplates();
+
+                var categories = _dataService.LoadVehicleCategories();
+                var studentCategory = categories.Categories.FirstOrDefault(c => c.Id == student.VehicleCategoryId);
+                string categoryCode = studentCategory?.Code ?? "B";
+
+                var contractTemplate = FindContractTemplateByCategory(templates, categoryCode);
+
+                if (contractTemplate == null)
+                {
+                    MessageBox.Show($"Шаблон договора для категории {categoryCode} не найден. Пожалуйста, настройте шаблоны документов.",
+                                   "Шаблон не найден", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                var saveDialog = new Microsoft.Win32.SaveFileDialog
+                {
+                    Filter = "Word documents (*.docx)|*.docx|All files (*.*)|*.*",
+                    FileName = $"Договор_{categoryCode}_{student.LastName}_{student.FirstName}_{DateTime.Now:ddMMyyyy}",
+                    DefaultExt = ".docx"
+                };
+
+                if (saveDialog.ShowDialog() == true)
+                {
+                    var documentGenerator = new DocumentGenerator(_dataService);
+
+                    bool success = documentGenerator.GenerateDocument(
+                        new List<Student> { student },
+                        contractTemplate,
+                        saveDialog.FileName
+                    );
+
+                    if (success)
+                    {
+                        SaveGeneratedDocumentInfo(student, contractTemplate, saveDialog.FileName);
+
+                        MessageBox.Show($"Договор для категории {categoryCode} успешно сгенерирован и сохранен:\n{saveDialog.FileName}",
+                                      "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+
+                        var openResult = MessageBox.Show("Открыть сгенерированный договор?", "Открыть документ",
+                                                       MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+                        if (openResult == MessageBoxResult.Yes)
+                        {
+                            try
+                            {
+                                System.Diagnostics.Process.Start(saveDialog.FileName);
+                            }
+                            catch (Exception ex)
+                            {
+                                MessageBox.Show($"Не удалось открыть документ: {ex.Message}", "Ошибка");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        MessageBox.Show("Не удалось сгенерировать договор. Проверьте шаблон и попробуйте снова.",
+                                      "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при генерации договора: {ex.Message}", "Ошибка");
+            }
+        }
+
+        private DocumentTemplate FindContractTemplateByCategory(DocumentTemplateCollection templates, string categoryCode)
+        {
+            var exactMatch = templates.Templates.FirstOrDefault(t =>
+                (t.DocumentType == "Договор" || t.TemplateName.Contains("Договор")) &&
+                (t.TemplateName.ToLower().Contains($"категория {categoryCode.ToLower()}") ||
+                 t.TemplateName.ToLower().Contains($"кат. {categoryCode.ToLower()}") ||
+                 t.TemplateName.ToLower().Contains($"{categoryCode.ToLower()} категория") ||
+                 t.TemplateName.ToLower().Contains($"договор {categoryCode.ToLower()}")));
+
+            if (exactMatch != null)
+                return exactMatch;
+
+            var categoryMatch = templates.Templates.FirstOrDefault(t =>
+                (t.DocumentType == "Договор" || t.TemplateName.Contains("Договор")) &&
+                t.TemplateName.ToLower().Contains(categoryCode.ToLower()));
+
+            if (categoryMatch != null)
+                return categoryMatch;
+
+            var generalContract = templates.Templates.FirstOrDefault(t =>
+                t.DocumentType == "Договор" || t.TemplateName.Contains("Договор"));
+
+            return generalContract;
+        }
+
+        private void SaveGeneratedDocumentInfo(Student student, DocumentTemplate template, string filePath)
+        {
+            try
+            {
+                var generatedDocuments = _dataService.LoadGeneratedDocuments();
+
+                var newDocument = new GeneratedDocument
+                {
+                    Id = GetNextDocumentId(generatedDocuments),
+                    TemplateId = template.Id,
+                    StudentId = student.Id,
+                    CreationDate = DateTime.Now,
+                    FilePath = filePath,
+                    Data = $"Договор для {student.FullName}. Стоимость: {GetStudentTuitionAmount(student.Id):N2} руб."
+                };
+
+                generatedDocuments.Documents.Add(newDocument);
+                _dataService.SaveGeneratedDocuments(generatedDocuments);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка при сохранении информации о документе: {ex.Message}");
+            }
+        }
+
+        private int GetNextDocumentId(GeneratedDocumentCollection documents)
+        {
+            return documents.Documents.Count > 0 ? documents.Documents.Max(d => d.Id) + 1 : 1;
+        }
+
+        private decimal GetStudentTuitionAmount(int studentId)
+        {
+            var tuitions = _dataService.LoadStudentTuitions();
+            var tuition = tuitions.Tuitions.FirstOrDefault(t => t.StudentId == studentId);
+            return tuition?.FinalAmount ?? 0;
+        }
+
+        private bool CheckContractData(Student student)
+        {
+            var passports = _dataService.LoadPassportData();
+            var tuitions = _dataService.LoadStudentTuitions();
+
+            bool hasPassport = passports.Passports.Any(p => p.StudentId == student.Id);
+            bool hasTuition = tuitions.Tuitions.Any(t => t.StudentId == student.Id);
+
+            return hasPassport && hasTuition;
         }
     }
 }
