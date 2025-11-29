@@ -32,7 +32,6 @@ namespace DrivingSchool.Views
                 if (_students?.Students == null) _students = new StudentCollection();
                 if (_addresses?.Addresses == null) _addresses = new StudentRegistrationAddressCollection();
 
-                // При загрузке данных сразу показываем все адреса
                 ApplyFilter();
                 UpdateUIForSelectedStudent(null);
             }
