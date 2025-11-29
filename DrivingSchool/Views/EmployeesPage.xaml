@@ -40,9 +40,10 @@
                   SelectionMode="Single"
                   IsReadOnly="True"
                   Margin="10,0,10,10"
-                  SelectionChanged="EmployeesGrid_SelectionChanged">
+                  SelectionChanged="EmployeesGrid_SelectionChanged"
+                  MouseDoubleClick="EmployeesGrid_MouseDoubleClick">
+
             <DataGrid.Columns>
-                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50" IsReadOnly="True"/>
                 <DataGridTextColumn Header="ФИО" Binding="{Binding FullName}" Width="200"/>
                 <DataGridTextColumn Header="Должность" Binding="{Binding Position}" Width="150"/>
                 <DataGridTextColumn Header="Статус" Binding="{Binding Status}" Width="100"/>

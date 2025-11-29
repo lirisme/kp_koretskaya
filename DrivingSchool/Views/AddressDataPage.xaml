@@ -30,7 +30,7 @@
                 <TextBox Grid.Row="0" Grid.Column="1" x:Name="SearchTextBox" 
                         Padding="10,8" FontSize="14"
                         TextChanged="SearchTextBox_TextChanged"
-                        ToolTip="Введите ФИО, телефон или ID учащегося..."/>
+                        ToolTip="Введите ФИО или телефон учащегося..."/>
 
                 <Button Grid.Row="0" Grid.Column="2" Content="Очистить" 
                        Click="ClearSearch_Click" Margin="10,0,0,0" Padding="15,8"
@@ -125,9 +125,9 @@
                   SelectionMode="Single"
                   IsReadOnly="True"
                   Margin="10,0,10,10"
-                  SelectionChanged="AddressGrid_SelectionChanged">
+                  SelectionChanged="AddressGrid_SelectionChanged"
+                  MouseDoubleClick="AddressGrid_MouseDoubleClick">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"/>
                 <DataGridTextColumn Header="Полный адрес" Binding="{Binding FullAddress}" Width="300"/>
                 <DataGridTextColumn Header="Регион" Binding="{Binding Region}" Width="120"/>
                 <DataGridTextColumn Header="Населенный пункт" Binding="{Binding City}" Width="120"/>

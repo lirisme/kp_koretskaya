@@ -216,11 +216,11 @@
                   IsReadOnly="True"
                   Margin="10"
                   SelectionChanged="PaymentsGrid_SelectionChanged"
+                  MouseDoubleClick="PaymentsGrid_MouseDoubleClick"
                   Background="White"
                   BorderBrush="#E0E0E0"
                   BorderThickness="1">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="40"/>
                 <DataGridTextColumn Header="Дата оплаты" Binding="{Binding PaymentDate, StringFormat=dd.MM.yyyy}" Width="90"/>
                 <DataGridTextColumn Header="Сумма" Binding="{Binding Amount, StringFormat=N2}" Width="80"/>
                 <DataGridTextColumn Header="Тип оплаты" Binding="{Binding PaymentType}" Width="100"/>

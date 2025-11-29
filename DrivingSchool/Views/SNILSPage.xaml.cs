@@ -224,5 +224,15 @@ namespace DrivingSchool.Views
         {
             MessageBox.Show("Функция печати в разработке", "Информация");
         }
+
+        private void SNILSGrid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            var row = ItemsControl.ContainerFromElement((DataGrid)sender, e.OriginalSource as DependencyObject) as DataGridRow;
+
+            if (row != null && row.DataContext is StudentSNILS snils)
+            {
+                EditSNILS_Click(sender, e);
+            }
+        }
     }
 }

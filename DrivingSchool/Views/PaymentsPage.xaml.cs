@@ -152,6 +152,16 @@ namespace DrivingSchool.Views
             }
         }
 
+        private void PaymentsGrid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            var row = ItemsControl.ContainerFromElement((DataGrid)sender, e.OriginalSource as DependencyObject) as DataGridRow;
+
+            if (row != null && row.DataContext is PaymentWithStatus payment)
+            {
+                EditPayment_Click(sender, e);
+            }
+        }
+
         private void UpdateSelectedStudentPanel()
         {
             if (_selectedStudent != null)
@@ -462,6 +472,7 @@ namespace DrivingSchool.Views
                 }
             }
         }
+
     }
 
     public enum PaymentStatus

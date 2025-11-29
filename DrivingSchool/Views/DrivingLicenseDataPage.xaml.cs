@@ -326,5 +326,15 @@ namespace DrivingSchool.Views
                 MessageBox.Show("Выберите запись для печати", "Предупреждение");
             }
         }
+
+        private void LicenseGrid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            var row = ItemsControl.ContainerFromElement((DataGrid)sender, e.OriginalSource as DependencyObject) as DataGridRow;
+
+            if (row != null && row.DataContext is StudentDrivingLicense license)
+            {
+                EditLicense_Click(sender, e);
+            }
+        }
     }
 }

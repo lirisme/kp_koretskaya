@@ -46,7 +46,9 @@
                   IsReadOnly="True"
                   Margin="10,0,10,10"
                   SelectionChanged="StudentsGrid_SelectionChanged"
-                  LoadingRow="StudentsGrid_LoadingRow">
+                  LoadingRow="StudentsGrid_LoadingRow"
+                  MouseDoubleClick="StudentsGrid_MouseDoubleClick">
+
 
             <DataGrid.Columns>
                 <DataGridTemplateColumn Header="" Width="40">
@@ -128,7 +130,7 @@
                                 <Run Text="Дата рождения: "/><Run Text="{Binding BirthDate, StringFormat=dd.MM.yyyy}"/>
                             </TextBlock>
                         </Setter.Value>
-                    </Setter>
+                    </Setter> 
                 </Style>
             </DataGrid.RowStyle>
         </DataGrid>

@@ -113,9 +113,10 @@
                   SelectionMode="Single"
                   IsReadOnly="True"
                   Margin="10,0,10,10"
-                  SelectionChanged="LicenseGrid_SelectionChanged">
+                  SelectionChanged="LicenseGrid_SelectionChanged"
+                  MouseDoubleClick="LicenseGrid_MouseDoubleClick">
+
             <DataGrid.Columns>
-                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"/>
                 <DataGridTextColumn Header="Серия" Binding="{Binding Series}" Width="80"/>
                 <DataGridTextColumn Header="Номер" Binding="{Binding Number}" Width="100"/>
                 <DataGridTextColumn Header="Категории" Binding="{Binding Categories}" Width="100"/>

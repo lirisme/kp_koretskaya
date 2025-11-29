@@ -358,5 +358,15 @@ namespace DrivingSchool.Views
                 MessageBox.Show("Выберите запись для печати", "Предупреждение");
             }
         }
+
+        private void PassportGrid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            var row = ItemsControl.ContainerFromElement((DataGrid)sender, e.OriginalSource as DependencyObject) as DataGridRow;
+
+            if (row != null && row.DataContext is StudentPassportData passport)
+            {
+                EditPassport_Click(sender, e);
+            }
+        }
     }
 }

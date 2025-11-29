@@ -868,5 +868,15 @@ namespace DrivingSchool.Views
 
             return hasPassport && hasTuition;
         }
+
+        private void StudentsGrid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            var row = ItemsControl.ContainerFromElement((DataGrid)sender, e.OriginalSource as DependencyObject) as DataGridRow;
+
+            if (row != null && row.DataContext is Student student)
+            {
+                EditStudent_Click(sender, e);
+            }
+        }
     }
 }

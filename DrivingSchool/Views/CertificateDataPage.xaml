@@ -113,9 +113,10 @@
                   SelectionMode="Single"
                   IsReadOnly="True"
                   Margin="10,0,10,10"
-                  SelectionChanged="CertificateGrid_SelectionChanged">
+                  SelectionChanged="CertificateGrid_SelectionChanged"
+                  MouseDoubleClick="CertificateGrid_MouseDoubleClick">
+
             <DataGrid.Columns>
-                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"/>
                 <DataGridTextColumn Header="Серия" Binding="{Binding CertificateSeries}" Width="80"/>
                 <DataGridTextColumn Header="Номер" Binding="{Binding CertificateNumber}" Width="100"/>
                 <DataGridTextColumn Header="Категория" Binding="{Binding CategoryCode}" Width="80"/>

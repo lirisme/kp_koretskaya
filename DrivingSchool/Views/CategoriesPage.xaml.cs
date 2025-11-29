@@ -144,5 +144,15 @@ namespace DrivingSchool.Views
                 MessageBox.Show("Выберите категорию для просмотра", "Предупреждение");
             }
         }
+
+        private void CategoriesGrid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            var row = ItemsControl.ContainerFromElement((DataGrid)sender, e.OriginalSource as DependencyObject) as DataGridRow;
+
+            if (row != null && row.DataContext is VehicleCategory category)
+            {
+                EditCategory_Click(sender, e);
+            }
+        }
     }
 }

@@ -71,12 +71,18 @@
 
             <TabItem Header="📋 Общий список">
                 <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="284*"/>
+                        <ColumnDefinition Width="13*"/>
+                        <ColumnDefinition Width="297*"/>
+                        <ColumnDefinition Width="297*"/>
+                    </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
-                    <GroupBox Grid.Row="0" Header="Общая статистика" Margin="5">
+                    <GroupBox Grid.Row="0" Header="Общая статистика" Margin="5,5,5,5" Grid.ColumnSpan="4">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
@@ -113,9 +119,8 @@
                         </Grid>
                     </GroupBox>
 
-                    <DataGrid Grid.Row="1" x:Name="StudentsDataGrid" AutoGenerateColumns="False">
+                    <DataGrid Grid.Row="1" x:Name="StudentsDataGrid" AutoGenerateColumns="False" Grid.ColumnSpan="4" Margin="5,5,5,5">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"/>
                             <DataGridTextColumn Header="ФИО" Binding="{Binding FullName}" Width="200"/>
                             <DataGridTextColumn Header="Телефон" Binding="{Binding Phone}" Width="120"/>
                             <DataGridTextColumn Header="Возраст" Binding="{Binding Age}" Width="60"/>

@@ -37,11 +37,9 @@
                   SelectionMode="Single"
                   IsReadOnly="True"
                   Margin="10"
-                  SelectionChanged="TariffsGrid_SelectionChanged">
+                  SelectionChanged="TariffsGrid_SelectionChanged"
+                  MouseDoubleClick="TariffsGrid_MouseDoubleClick">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="ID" 
-                                  Binding="{Binding Id}" 
-                                  Width="50"/>
                 <DataGridTextColumn Header="Название" 
                                   Binding="{Binding Name}" 
                                   Width="200"/>

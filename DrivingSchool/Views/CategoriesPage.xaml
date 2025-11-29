@@ -41,9 +41,10 @@
                   SelectionMode="Single"
                   IsReadOnly="True"
                   Margin="10,0,10,10"
-                  SelectionChanged="CategoriesGrid_SelectionChanged">
+                  SelectionChanged="CategoriesGrid_SelectionChanged"
+                  MouseDoubleClick="CategoriesGrid_MouseDoubleClick">
+
             <DataGrid.Columns>
-                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"/>
                 <DataGridTextColumn Header="Код" Binding="{Binding Code}" Width="80"/>
                 <DataGridTextColumn Header="Название" Binding="{Binding FullName}" Width="*"/>
                 <DataGridTextColumn Header="Отображение" Binding="{Binding DisplayText}" Width="200"/>

@@ -125,9 +125,10 @@
                   SelectionMode="Single"
                   IsReadOnly="True"
                   Margin="10,0,10,10"
-                  SelectionChanged="PassportGrid_SelectionChanged">
+                  SelectionChanged="PassportGrid_SelectionChanged"
+                  MouseDoubleClick="PassportGrid_MouseDoubleClick">
+
             <DataGrid.Columns>
-                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"/>
                 <DataGridTextColumn Header="Тип документа" Binding="{Binding DocumentType}" Width="120"/>
                 <DataGridTextColumn Header="Серия" Binding="{Binding Series}" Width="80"/>
                 <DataGridTextColumn Header="Номер" Binding="{Binding Number}" Width="100"/>
