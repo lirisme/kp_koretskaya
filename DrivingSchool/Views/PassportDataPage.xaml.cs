@@ -32,6 +32,7 @@ namespace DrivingSchool.Views
                 if (_students?.Students == null) _students = new StudentCollection();
                 if (_passports?.Passports == null) _passports = new StudentPassportDataCollection();
 
+                ApplyFilter();
                 UpdateUIForSelectedStudent(null);
             }
             catch (Exception ex)
@@ -39,6 +40,7 @@ namespace DrivingSchool.Views
                 MessageBox.Show($"Ошибка загрузки данных: {ex.Message}", "Ошибка");
                 _students = new StudentCollection();
                 _passports = new StudentPassportDataCollection();
+                ApplyFilter();
                 UpdateUIForSelectedStudent(null);
             }
         }
@@ -125,7 +127,10 @@ namespace DrivingSchool.Views
             }
             else
             {
-                _filteredPassports = new StudentPassportDataCollection();
+                _filteredPassports = new StudentPassportDataCollection
+                {
+                    Passports = _passports.Passports.ToList()
+                };
             }
 
             PassportGrid.ItemsSource = _filteredPassports.Passports;
@@ -173,6 +178,10 @@ namespace DrivingSchool.Views
                 AddPassportButton.IsEnabled = false;
                 EditPassportButton.IsEnabled = false;
                 DeletePassportButton.IsEnabled = false;
+
+                StatusPanel.Visibility = Visibility.Visible;
+                StatusPanel.Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(232, 245, 233));
+                StatusTextBlock.Text = $"Всего паспортных данных в базе: {_passports.Passports.Count}. Выберите студента для работы с конкретными данными.";
                 return;
             }
 
@@ -180,7 +189,6 @@ namespace DrivingSchool.Views
             var isPassportSelected = PassportGrid.SelectedItem != null;
 
             AddPassportButton.IsEnabled = !hasPassportData;
-
             EditPassportButton.IsEnabled = hasPassportData && isPassportSelected;
             DeletePassportButton.IsEnabled = hasPassportData && isPassportSelected;
 
@@ -233,7 +241,7 @@ namespace DrivingSchool.Views
                 }
                 else
                 {
-                    mainWindow.StatusText.Text = "Паспортные данные: выберите учащегося";
+                    mainWindow.StatusText.Text = $"Паспортные данные: всего {_passports.Passports.Count} записей";
                 }
             }
         }

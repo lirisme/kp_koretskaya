@@ -32,6 +32,8 @@ namespace DrivingSchool.Views
                 if (_students?.Students == null) _students = new StudentCollection();
                 if (_addresses?.Addresses == null) _addresses = new StudentRegistrationAddressCollection();
 
+                // При загрузке данных сразу показываем все адреса
+                ApplyFilter();
                 UpdateUIForSelectedStudent(null);
             }
             catch (Exception ex)
@@ -39,6 +41,7 @@ namespace DrivingSchool.Views
                 MessageBox.Show($"Ошибка загрузки данных: {ex.Message}", "Ошибка");
                 _students = new StudentCollection();
                 _addresses = new StudentRegistrationAddressCollection();
+                ApplyFilter();
                 UpdateUIForSelectedStudent(null);
             }
         }
@@ -158,7 +161,10 @@ namespace DrivingSchool.Views
             }
             else
             {
-                _filteredAddresses = new StudentRegistrationAddressCollection();
+                _filteredAddresses = new StudentRegistrationAddressCollection
+                {
+                    Addresses = _addresses.Addresses.ToList()
+                };
             }
 
             AddressGrid.ItemsSource = _filteredAddresses.Addresses;
@@ -173,6 +179,10 @@ namespace DrivingSchool.Views
                 AddAddressButton.IsEnabled = false;
                 EditAddressButton.IsEnabled = false;
                 DeleteAddressButton.IsEnabled = false;
+
+                StatusPanel.Visibility = Visibility.Visible;
+                StatusPanel.Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(232, 245, 233));
+                StatusTextBlock.Text = $"Всего адресов в базе: {_addresses.Addresses.Count}. Выберите студента для работы с конкретным адресом.";
                 return;
             }
 
@@ -180,7 +190,6 @@ namespace DrivingSchool.Views
             var isAddressSelected = AddressGrid.SelectedItem != null;
 
             AddAddressButton.IsEnabled = !hasAddressData;
-
             EditAddressButton.IsEnabled = hasAddressData && isAddressSelected;
             DeleteAddressButton.IsEnabled = hasAddressData && isAddressSelected;
 
@@ -233,7 +242,7 @@ namespace DrivingSchool.Views
                 }
                 else
                 {
-                    mainWindow.StatusText.Text = "Адрес регистрации: выберите учащегося";
+                    mainWindow.StatusText.Text = $"Адреса регистрации: всего {_addresses.Addresses.Count} записей";
                 }
             }
         }

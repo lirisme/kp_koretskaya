@@ -59,7 +59,8 @@ namespace DrivingSchool.Views
 
                 var categories = _dataService.LoadVehicleCategories();
 
-                var filtered = _students.Students;
+                var filtered = _students.Students.ToList();
+
                 if (!string.IsNullOrWhiteSpace(searchText))
                 {
                     filtered = filtered
@@ -87,7 +88,17 @@ namespace DrivingSchool.Views
             var mainWindow = Application.Current.MainWindow as MainWindow;
             if (mainWindow != null)
             {
-                mainWindow.StatusText.Text = $"Найдено учащихся: {_filteredStudents?.Students?.Count ?? 0}";
+                var totalCount = _students?.Students?.Count ?? 0;
+                var filteredCount = _filteredStudents?.Students?.Count ?? 0;
+
+                if (filteredCount == totalCount)
+                {
+                    mainWindow.StatusText.Text = $"Всего учащихся: {totalCount}";
+                }
+                else
+                {
+                    mainWindow.StatusText.Text = $"Найдено учащихся: {filteredCount} из {totalCount}";
+                }
             }
         }
 

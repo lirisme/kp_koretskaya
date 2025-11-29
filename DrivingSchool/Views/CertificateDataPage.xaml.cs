@@ -33,6 +33,7 @@ namespace DrivingSchool.Views
                 if (_students?.Students == null) _students = new StudentCollection();
                 if (_certificates?.Certificates == null) _certificates = new StudentCertificateCollection();
 
+                ApplyFilter();
                 UpdateButtonsAvailability();
             }
             catch (Exception ex)
@@ -40,10 +41,11 @@ namespace DrivingSchool.Views
                 MessageBox.Show($"Ошибка загрузки данных: {ex.Message}", "Ошибка");
                 _students = new StudentCollection();
                 _certificates = new StudentCertificateCollection();
+                ApplyFilter();
                 UpdateButtonsAvailability();
             }
         }
-       
+
         private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             var searchText = SearchTextBox.Text?.ToLower() ?? string.Empty;
@@ -126,7 +128,10 @@ namespace DrivingSchool.Views
             }
             else
             {
-                _filteredCertificates = new StudentCertificateCollection();
+                _filteredCertificates = new StudentCertificateCollection
+                {
+                    Certificates = _certificates.Certificates.ToList()
+                };
             }
 
             CertificateGrid.ItemsSource = _filteredCertificates.Certificates;
@@ -141,6 +146,10 @@ namespace DrivingSchool.Views
                 AddCertificateButton.IsEnabled = false;
                 EditCertificateButton.IsEnabled = false;
                 DeleteCertificateButton.IsEnabled = false;
+
+                StatusPanel.Visibility = Visibility.Visible;
+                StatusPanel.Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(232, 245, 233));
+                StatusTextBlock.Text = $"Всего свидетельств в базе: {_certificates.Certificates.Count}. Выберите студента для работы с конкретным свидетельством.";
                 return;
             }
 
@@ -200,7 +209,8 @@ namespace DrivingSchool.Views
                 }
                 else
                 {
-                    mainWindow.StatusText.Text = "Свидетельства: выберите учащегося";
+                    // ДОБАВИТЬ ЭТУ СТРОКУ
+                    mainWindow.StatusText.Text = $"Свидетельства: всего {_certificates.Certificates.Count} записей";
                 }
             }
         }

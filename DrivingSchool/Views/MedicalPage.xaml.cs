@@ -29,12 +29,15 @@ namespace DrivingSchool.Views
             {
                 _students = _dataService.LoadStudents();
                 _medicalList = _dataService.LoadMedicalData();
+
+                LoadMedicalDataForStudent();
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка загрузки данных: {ex.Message}", "Ошибка");
                 _students = new StudentCollection();
                 _medicalList = new StudentMedicalCertificateCollection();
+                LoadMedicalDataForStudent();
             }
         }
 
@@ -113,12 +116,32 @@ namespace DrivingSchool.Views
                     StatusPanel.Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(255, 243, 205));
                 }
             }
+            else
+            {
+                MedicalGrid.ItemsSource = _medicalList.Certificates.ToList();
+
+                StatusTextBlock.Text = $"Всего медицинских справок в базе: {_medicalList.Certificates.Count}. Выберите студента для работы с конкретной справкой.";
+                StatusPanel.Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(232, 245, 233));
+            }
 
             UpdateButtonsAvailability();
         }
 
         private void UpdateButtonsAvailability()
         {
+            if (_selectedStudent == null)
+            {
+                // ДОБАВИТЬ ЭТОТ БЛОК
+                AddMedicalButton.IsEnabled = false;
+                EditMedicalButton.IsEnabled = false;
+                DeleteMedicalButton.IsEnabled = false;
+
+                AddMedicalButton.Opacity = 0.5;
+                EditMedicalButton.Opacity = 0.5;
+                DeleteMedicalButton.Opacity = 0.5;
+                return;
+            }
+
             bool hasStudent = _selectedStudent != null;
             bool hasMedical = hasStudent && _medicalList.Certificates.Any(m => m.StudentId == _selectedStudent.Id);
             bool hasSelection = MedicalGrid.SelectedItem != null;
@@ -136,7 +159,7 @@ namespace DrivingSchool.Views
         {
             _selectedStudent = null;
             UpdateSelectedStudentPanel();
-            MedicalGrid.ItemsSource = null;
+            LoadMedicalDataForStudent();
             StatusTextBlock.Text = "Выберите учащегося для работы с медицинскими справками";
             StatusPanel.Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(255, 243, 205));
             UpdateButtonsAvailability();

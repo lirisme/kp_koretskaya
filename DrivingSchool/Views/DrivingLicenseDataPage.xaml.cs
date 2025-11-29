@@ -32,6 +32,7 @@ namespace DrivingSchool.Views
                 if (_students?.Students == null) _students = new StudentCollection();
                 if (_licenses?.Licenses == null) _licenses = new StudentDrivingLicenseCollection();
 
+                ApplyFilter();
                 UpdateButtonsAvailability();
             }
             catch (Exception ex)
@@ -39,6 +40,7 @@ namespace DrivingSchool.Views
                 MessageBox.Show($"Ошибка загрузки данных: {ex.Message}", "Ошибка");
                 _students = new StudentCollection();
                 _licenses = new StudentDrivingLicenseCollection();
+                ApplyFilter();
                 UpdateButtonsAvailability();
             }
         }
@@ -125,7 +127,10 @@ namespace DrivingSchool.Views
             }
             else
             {
-                _filteredLicenses = new StudentDrivingLicenseCollection();
+                _filteredLicenses = new StudentDrivingLicenseCollection
+                {
+                    Licenses = _licenses.Licenses.ToList()
+                };
             }
 
             LicenseGrid.ItemsSource = _filteredLicenses.Licenses;
@@ -140,6 +145,10 @@ namespace DrivingSchool.Views
                 AddLicenseButton.IsEnabled = false;
                 EditLicenseButton.IsEnabled = false;
                 DeleteLicenseButton.IsEnabled = false;
+
+                StatusPanel.Visibility = Visibility.Visible;
+                StatusPanel.Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(232, 245, 233));
+                StatusTextBlock.Text = $"Всего удостоверений в базе: {_licenses.Licenses.Count}. Выберите студента для работы с конкретным удостоверением.";
                 return;
             }
 
@@ -199,7 +208,7 @@ namespace DrivingSchool.Views
                 }
                 else
                 {
-                    mainWindow.StatusText.Text = "Водительские удостоверения: выберите учащегося";
+                    mainWindow.StatusText.Text = $"Водительские удостоверения: всего {_licenses.Licenses.Count} записей";
                 }
             }
         }

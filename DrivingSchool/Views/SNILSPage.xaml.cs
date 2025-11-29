@@ -29,12 +29,15 @@ namespace DrivingSchool.Views
             {
                 _students = _dataService.LoadStudents();
                 _snilsList = _dataService.LoadSNILSData();
+
+                LoadSNILSDataForStudent();
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка загрузки данных: {ex.Message}", "Ошибка");
                 _students = new StudentCollection();
                 _snilsList = new StudentSNILSCollection();
+                LoadSNILSDataForStudent();
             }
         }
 
@@ -113,12 +116,31 @@ namespace DrivingSchool.Views
                     StatusPanel.Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(255, 243, 205));
                 }
             }
+            else
+            {
+                SNILSGrid.ItemsSource = _snilsList.SNILSList.ToList();
+
+                StatusTextBlock.Text = $"Всего записей СНИЛС в базе: {_snilsList.SNILSList.Count}. Выберите студента для работы с конкретными данными.";
+                StatusPanel.Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(232, 245, 233));
+            }
 
             UpdateButtonsAvailability();
         }
 
         private void UpdateButtonsAvailability()
         {
+            if (_selectedStudent == null)
+            {
+                AddSNILSButton.IsEnabled = false;
+                EditSNILSButton.IsEnabled = false;
+                DeleteSNILSButton.IsEnabled = false;
+
+                AddSNILSButton.Opacity = 0.5;
+                EditSNILSButton.Opacity = 0.5;
+                DeleteSNILSButton.Opacity = 0.5;
+                return;
+            }
+
             bool hasStudent = _selectedStudent != null;
             bool hasSNILS = hasStudent && _snilsList.SNILSList.Any(s => s.StudentId == _selectedStudent.Id);
             bool hasSelection = SNILSGrid.SelectedItem != null;
@@ -136,7 +158,7 @@ namespace DrivingSchool.Views
         {
             _selectedStudent = null;
             UpdateSelectedStudentPanel();
-            SNILSGrid.ItemsSource = null;
+            LoadSNILSDataForStudent();
             StatusTextBlock.Text = "Выберите учащегося для работы с данными СНИЛС";
             StatusPanel.Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(255, 243, 205));
             UpdateButtonsAvailability();
