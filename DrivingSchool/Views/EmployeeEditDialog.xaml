@@ -39,7 +39,7 @@
 
                         <TextBlock Text="Должность*" Margin="5,10,5,0"/>
                         <ComboBox x:Name="PositionComboBox" 
-                                  SelectedValue="{Binding Position, UpdateSourceTrigger=PropertyChanged}"
+                                  SelectedItem="{Binding Position, UpdateSourceTrigger=PropertyChanged}"
                                   IsEditable="True">
                             <ComboBoxItem Content="Администратор"/>
                             <ComboBoxItem Content="Преподаватель теории"/>
@@ -51,7 +51,7 @@
 
                         <TextBlock Text="Статус*" Margin="5,10,5,0"/>
                         <ComboBox x:Name="StatusComboBox" 
-                                  SelectedValue="{Binding Status, UpdateSourceTrigger=PropertyChanged}">
+                                  SelectedItem="{Binding Status, UpdateSourceTrigger=PropertyChanged}">
                             <ComboBoxItem Content="Активен"/>
                             <ComboBoxItem Content="Неактивен"/>
                             <ComboBoxItem Content="В отпуске"/>

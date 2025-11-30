@@ -129,6 +129,8 @@
                   MouseDoubleClick="PassportGrid_MouseDoubleClick">
 
             <DataGrid.Columns>
+                <!-- Добавлен столбец с ФИО студента -->
+                <DataGridTextColumn Header="Студент" Binding="{Binding StudentName}" Width="200"/>
                 <DataGridTextColumn Header="Тип документа" Binding="{Binding DocumentType}" Width="120"/>
                 <DataGridTextColumn Header="Серия" Binding="{Binding Series}" Width="80"/>
                 <DataGridTextColumn Header="Номер" Binding="{Binding Number}" Width="100"/>

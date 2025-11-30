@@ -128,6 +128,7 @@
                   SelectionChanged="SNILSGrid_SelectionChanged"
                   MouseDoubleClick="SNILSGrid_MouseDoubleClick">
             <DataGrid.Columns>
+                <DataGridTextColumn Header="Студент" Binding="{Binding StudentName}" Width="200"/>
                 <DataGridTextColumn Header="Номер СНИЛС" Binding="{Binding Number}" Width="150"/>
                 <DataGridTextColumn Header="Дата выдачи" Binding="{Binding IssueDate, StringFormat=dd.MM.yyyy}" Width="100"/>
                 <DataGridTextColumn Header="Кем выдан" Binding="{Binding IssuedBy}" Width="200"/>

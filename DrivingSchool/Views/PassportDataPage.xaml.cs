@@ -45,6 +45,12 @@ namespace DrivingSchool.Views
             }
         }
 
+        private string GetStudentName(int studentId)
+        {
+            var student = _students.Students.FirstOrDefault(s => s.Id == studentId);
+            return student?.FullName ?? "Неизвестный студент";
+        }
+
         private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             var searchText = SearchTextBox.Text?.ToLower() ?? string.Empty;
@@ -122,6 +128,18 @@ namespace DrivingSchool.Views
                 {
                     Passports = _passports.Passports
                         .Where(p => p.StudentId == _selectedStudent.Id)
+                        .Select(p => new StudentPassportData
+                        {
+                            Id = p.Id,
+                            StudentId = p.StudentId,
+                            DocumentType = p.DocumentType,
+                            Series = p.Series,
+                            Number = p.Number,
+                            IssuedBy = p.IssuedBy,
+                            DivisionCode = p.DivisionCode,
+                            IssueDate = p.IssueDate,
+                            StudentName = GetStudentName(p.StudentId)
+                        })
                         .ToList()
                 };
             }
@@ -129,7 +147,20 @@ namespace DrivingSchool.Views
             {
                 _filteredPassports = new StudentPassportDataCollection
                 {
-                    Passports = _passports.Passports.ToList()
+                    Passports = _passports.Passports
+                        .Select(p => new StudentPassportData
+                        {
+                            Id = p.Id,
+                            StudentId = p.StudentId,
+                            DocumentType = p.DocumentType,
+                            Series = p.Series,
+                            Number = p.Number,
+                            IssuedBy = p.IssuedBy,
+                            DivisionCode = p.DivisionCode,
+                            IssueDate = p.IssueDate,
+                            StudentName = GetStudentName(p.StudentId)
+                        })
+                        .ToList()
                 };
             }
 
@@ -158,16 +189,16 @@ namespace DrivingSchool.Views
                                       $"Используйте функции редактирования или удаления.";
 
                 AddPassportButton.IsEnabled = false;
-                EditPassportButton.IsEnabled = true;  
+                EditPassportButton.IsEnabled = true;
                 DeletePassportButton.IsEnabled = true;
             }
             else
             {
                 StatusPanel.Visibility = Visibility.Collapsed;
 
-                AddPassportButton.IsEnabled = true;   
-                EditPassportButton.IsEnabled = false; 
-                DeletePassportButton.IsEnabled = false; 
+                AddPassportButton.IsEnabled = true;
+                EditPassportButton.IsEnabled = false;
+                DeletePassportButton.IsEnabled = false;
             }
         }
 
@@ -208,7 +239,7 @@ namespace DrivingSchool.Views
             if (hasPassportData)
             {
                 StatusPanel.Visibility = Visibility.Visible;
-                StatusPanel.Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(232, 245, 233)); 
+                StatusPanel.Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(232, 245, 233));
                 StatusPanel.BorderBrush = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(200, 230, 201));
                 StatusTextBlock.Text = $"✅ Для учащегося {_selectedStudent.FullName} внесены паспортные данные. " +
                                       $"Выберите запись для редактирования или удаления.";
@@ -216,7 +247,7 @@ namespace DrivingSchool.Views
             else
             {
                 StatusPanel.Visibility = Visibility.Visible;
-                StatusPanel.Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(255, 243, 205)); 
+                StatusPanel.Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(255, 243, 205));
                 StatusPanel.BorderBrush = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(255, 238, 186));
                 StatusTextBlock.Text = $"ℹ️ Для учащегося {_selectedStudent.FullName} паспортные данные отсутствуют. " +
                                       $"Нажмите 'Добавить паспорт' для внесения данных.";
@@ -263,10 +294,7 @@ namespace DrivingSchool.Views
                 var dialog = new PassportEditDialog(_dataService, _selectedStudent.Id);
                 if (dialog.ShowDialog() == true)
                 {
-                    _passports.Passports.Add(dialog.PassportData);
-                    _dataService.SavePassportData(_passports);
-                    ApplyFilter();
-
+                    LoadData();
                     MessageBox.Show($"Паспортные данные успешно добавлены!", "Успех");
                 }
             }
@@ -283,14 +311,8 @@ namespace DrivingSchool.Views
                 var dialog = new PassportEditDialog(_dataService, selectedPassport.StudentId, selectedPassport);
                 if (dialog.ShowDialog() == true)
                 {
-                    var index = _passports.Passports.IndexOf(selectedPassport);
-                    if (index >= 0)
-                    {
-                        _passports.Passports[index] = dialog.PassportData;
-                        _dataService.SavePassportData(_passports);
-                        ApplyFilter();
-                        MessageBox.Show($"Паспортные данные обновлены!", "Успех");
-                    }
+                    LoadData();
+                    MessageBox.Show($"Паспортные данные обновлены!", "Успех");
                 }
             }
             else

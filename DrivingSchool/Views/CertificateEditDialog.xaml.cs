@@ -14,7 +14,7 @@ namespace DrivingSchool.Views
         public StudentCertificate CertificateData { get; private set; }
         private bool _isEditMode;
         private Student _student;
-
+        
         public CertificateEditDialog(XmlDataService dataService, int studentId, StudentCertificate certificateData = null)
         {
             InitializeComponent();
@@ -44,6 +44,28 @@ namespace DrivingSchool.Views
 
             DataContext = CertificateData;
             InitializeCategoryField();
+
+            if (_student != null)
+            {
+                Title += $" - {_student.FullName}";
+            }
+
+            UpdateStudentInfo();
+        }
+
+        private void UpdateStudentInfo()
+        {
+            if (_student != null)
+            {
+                TitleTextBlock.Text = $"Свидетельство об окончании учащегося: {_student.FullName}";
+
+                var categories = _dataService.LoadVehicleCategories();
+                var studentCategory = categories.Categories.FirstOrDefault(c => c.Id == _student.VehicleCategoryId);
+                if (studentCategory != null)
+                {
+                    CategoryTextBox.ToolTip = $"Категория автоматически заполняется из данных студента: {_student.FullName}";
+                }
+            }
         }
 
         private int GetNextCertificateId()
@@ -87,8 +109,37 @@ namespace DrivingSchool.Views
                 return;
             }
 
-            DialogResult = true;
-            Close();
+            try
+            {
+                var certificates = _dataService.LoadCertificates();
+
+                if (_isEditMode)
+                {
+                    var existingCertificate = certificates.Certificates.FirstOrDefault(c => c.Id == CertificateData.Id);
+                    if (existingCertificate != null)
+                    {
+                        existingCertificate.CertificateSeries = CertificateData.CertificateSeries;
+                        existingCertificate.CertificateNumber = CertificateData.CertificateNumber;
+                        existingCertificate.IssueDate = CertificateData.IssueDate;
+                        existingCertificate.VehicleCategoryId = CertificateData.VehicleCategoryId;
+                        existingCertificate.CategoryCode = CertificateData.CategoryCode;
+                    }
+                }
+                else
+                {
+                    certificates.Certificates.Add(CertificateData);
+                }
+
+                _dataService.SaveCertificates(certificates);
+
+                DialogResult = true;
+                Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при сохранении данных: {ex.Message}", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)

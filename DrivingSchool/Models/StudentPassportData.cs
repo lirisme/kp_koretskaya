@@ -15,7 +15,11 @@ namespace DrivingSchool.Models
         public string IssuedBy { get; set; } = string.Empty;
         public string DivisionCode { get; set; } = string.Empty;
         public DateTime IssueDate { get; set; }
+
+        [XmlIgnore]
+        public string StudentName { get; set; } = string.Empty;
     }
+
 
     [Serializable]
     [XmlRoot("StudentPassportData")]

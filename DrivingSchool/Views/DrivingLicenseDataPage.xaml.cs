@@ -45,6 +45,12 @@ namespace DrivingSchool.Views
             }
         }
 
+        private string GetStudentName(int studentId)
+        {
+            var student = _students.Students.FirstOrDefault(s => s.Id == studentId);
+            return student?.FullName ?? "Неизвестный студент";
+        }
+
         private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             var searchText = SearchTextBox.Text?.ToLower() ?? string.Empty;
@@ -133,9 +139,19 @@ namespace DrivingSchool.Views
                 };
             }
 
+            UpdateLicenseData();
+
             LicenseGrid.ItemsSource = _filteredLicenses.Licenses;
             UpdateButtonsAvailability();
             UpdateStatus();
+        }
+
+        private void UpdateLicenseData()
+        {
+            foreach (var license in _filteredLicenses.Licenses)
+            {
+                license.StudentName = GetStudentName(license.StudentId);
+            }
         }
 
         private void UpdateButtonsAvailability()
@@ -230,9 +246,7 @@ namespace DrivingSchool.Views
                 var dialog = new DrivingLicenseEditDialog(_dataService, _selectedStudent.Id);
                 if (dialog.ShowDialog() == true)
                 {
-                    _licenses.Licenses.Add(dialog.LicenseData);
-                    _dataService.SaveDrivingLicenses(_licenses);
-                    ApplyFilter();
+                    LoadData();
                     MessageBox.Show($"Данные водительского удостоверения успешно добавлены!", "Успех");
                 }
             }
@@ -249,14 +263,8 @@ namespace DrivingSchool.Views
                 var dialog = new DrivingLicenseEditDialog(_dataService, selectedLicense.StudentId, selectedLicense);
                 if (dialog.ShowDialog() == true)
                 {
-                    var index = _licenses.Licenses.IndexOf(selectedLicense);
-                    if (index >= 0)
-                    {
-                        _licenses.Licenses[index] = dialog.LicenseData;
-                        _dataService.SaveDrivingLicenses(_licenses);
-                        ApplyFilter();
-                        MessageBox.Show($"Данные водительского удостоверения обновлены!", "Успех");
-                    }
+                    LoadData();
+                    MessageBox.Show($"Данные водительского удостоверения обновлены!", "Успех");
                 }
             }
             else

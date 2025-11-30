@@ -26,6 +26,9 @@ namespace DrivingSchool.Models
 
         [XmlIgnore]
         public string Status => IsExpired ? "Просрочено" : "Действительно";
+
+        [XmlIgnore]
+        public string StudentName { get; set; } = string.Empty;
     }
 
     [Serializable]

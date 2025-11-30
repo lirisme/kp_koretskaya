@@ -59,7 +59,19 @@ namespace DrivingSchool.Views
         {
             if (!string.IsNullOrEmpty(Employee.Position))
             {
-                PositionComboBox.Text = Employee.Position;
+                foreach (ComboBoxItem item in PositionComboBox.Items)
+                {
+                    if (item.Content.ToString() == Employee.Position)
+                    {
+                        PositionComboBox.SelectedItem = item;
+                        break;
+                    }
+                }
+
+                if (PositionComboBox.SelectedItem == null)
+                {
+                    PositionComboBox.Text = Employee.Position;
+                }
             }
             else
             {
@@ -68,7 +80,14 @@ namespace DrivingSchool.Views
 
             if (!string.IsNullOrEmpty(Employee.Status))
             {
-                StatusComboBox.Text = Employee.Status;
+                foreach (ComboBoxItem item in StatusComboBox.Items)
+                {
+                    if (item.Content.ToString() == Employee.Status)
+                    {
+                        StatusComboBox.SelectedItem = item;
+                        break;
+                    }
+                }
             }
             else
             {
@@ -78,8 +97,23 @@ namespace DrivingSchool.Views
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
         {
-            Employee.Position = PositionComboBox.Text;
-            Employee.Status = StatusComboBox.Text;
+            if (PositionComboBox.SelectedItem is ComboBoxItem positionItem)
+            {
+                Employee.Position = positionItem.Content.ToString();
+            }
+            else
+            {
+                Employee.Position = PositionComboBox.Text;
+            }
+
+            if (StatusComboBox.SelectedItem is ComboBoxItem statusItem)
+            {
+                Employee.Status = statusItem.Content.ToString();
+            }
+            else
+            {
+                Employee.Status = StatusComboBox.Text;
+            }
 
             if (string.IsNullOrWhiteSpace(Employee.FullName))
             {

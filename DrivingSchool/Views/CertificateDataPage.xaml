@@ -117,6 +117,8 @@
                   MouseDoubleClick="CertificateGrid_MouseDoubleClick">
 
             <DataGrid.Columns>
+                <DataGridTextColumn Header="Студент" Binding="{Binding StudentName}" Width="200"/>
+
                 <DataGridTextColumn Header="Серия" Binding="{Binding CertificateSeries}" Width="80"/>
                 <DataGridTextColumn Header="Номер" Binding="{Binding CertificateNumber}" Width="100"/>
                 <DataGridTextColumn Header="Категория" Binding="{Binding CategoryCode}" Width="80"/>

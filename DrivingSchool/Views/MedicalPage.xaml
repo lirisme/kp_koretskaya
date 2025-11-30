@@ -129,6 +129,7 @@
                   MouseDoubleClick="MedicalGrid_MouseDoubleClick">
 
             <DataGrid.Columns>
+                <DataGridTextColumn Header="Студент" Binding="{Binding StudentName}" Width="200"/>
                 <DataGridTextColumn Header="Серия" Binding="{Binding Series}" Width="80"/>
                 <DataGridTextColumn Header="Номер" Binding="{Binding Number}" Width="100"/>
                 <DataGridTextColumn Header="Мед. учреждение" Binding="{Binding MedicalInstitution}" Width="200"/>

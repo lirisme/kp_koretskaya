@@ -128,6 +128,7 @@
                   SelectionChanged="AddressGrid_SelectionChanged"
                   MouseDoubleClick="AddressGrid_MouseDoubleClick">
             <DataGrid.Columns>
+                <DataGridTextColumn Header="Студент" Binding="{Binding StudentName}" Width="200"/>
                 <DataGridTextColumn Header="Полный адрес" Binding="{Binding FullAddress}" Width="300"/>
                 <DataGridTextColumn Header="Регион" Binding="{Binding Region}" Width="120"/>
                 <DataGridTextColumn Header="Населенный пункт" Binding="{Binding City}" Width="120"/>

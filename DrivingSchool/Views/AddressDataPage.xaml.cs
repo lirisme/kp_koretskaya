@@ -45,6 +45,12 @@ namespace DrivingSchool.Views
             }
         }
 
+        private string GetStudentName(int studentId)
+        {
+            var student = _students.Students.FirstOrDefault(s => s.Id == studentId);
+            return student?.FullName ?? "Неизвестный студент";
+        }
+
         private void UpdateUIForSelectedStudent(Student student)
         {
             if (student == null)
@@ -167,8 +173,18 @@ namespace DrivingSchool.Views
             }
 
             AddressGrid.ItemsSource = _filteredAddresses.Addresses;
+
+            UpdateStudentNames();
             UpdateButtonsAvailability();
             UpdateStatus();
+        }
+
+        private void UpdateStudentNames()
+        {
+            foreach (var address in _filteredAddresses.Addresses)
+            {
+                address.StudentName = GetStudentName(address.StudentId);
+            }
         }
 
         private void UpdateButtonsAvailability()
@@ -263,10 +279,7 @@ namespace DrivingSchool.Views
                 var dialog = new AddressEditDialog(_dataService, _selectedStudent.Id);
                 if (dialog.ShowDialog() == true)
                 {
-                    _addresses.Addresses.Add(dialog.Address);
-                    _dataService.SaveAddresses(_addresses);
-                    ApplyFilter();
-
+                    LoadData();
                     MessageBox.Show($"Адрес регистрации успешно добавлен!", "Успех");
                 }
             }
@@ -283,14 +296,8 @@ namespace DrivingSchool.Views
                 var dialog = new AddressEditDialog(_dataService, selectedAddress.StudentId, selectedAddress);
                 if (dialog.ShowDialog() == true)
                 {
-                    var index = _addresses.Addresses.IndexOf(selectedAddress);
-                    if (index >= 0)
-                    {
-                        _addresses.Addresses[index] = dialog.Address;
-                        _dataService.SaveAddresses(_addresses);
-                        ApplyFilter();
-                        MessageBox.Show($"Адрес регистрации обновлен!", "Успех");
-                    }
+                    LoadData();
+                    MessageBox.Show($"Адрес регистрации обновлен!", "Успех");
                 }
             }
             else

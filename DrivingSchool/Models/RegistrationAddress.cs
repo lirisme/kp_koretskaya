@@ -48,6 +48,9 @@ namespace DrivingSchool.Models
                 return string.Join(", ", parts);
             }
         }
+
+        [XmlIgnore]
+        public string StudentName { get; set; } = string.Empty;
     }
 
     [Serializable]

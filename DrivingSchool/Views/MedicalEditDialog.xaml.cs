@@ -39,6 +39,25 @@ namespace DrivingSchool.Views
             }
 
             DataContext = MedicalData;
+
+            var students = _dataService.LoadStudents();
+            var student = students.Students.FirstOrDefault(s => s.Id == studentId);
+            if (student != null)
+            {
+                Title += $" - {student.FullName}";
+            }
+
+            UpdateStudentInfo();
+        }
+
+        private void UpdateStudentInfo()
+        {
+            var students = _dataService.LoadStudents();
+            var student = students.Students.FirstOrDefault(s => s.Id == _studentId);
+            if (student != null)
+            {
+                TitleTextBlock.Text = $"Медицинская справка учащегося: {student.FullName}";
+            }
         }
 
         private int GetNextMedicalId()
@@ -58,8 +77,38 @@ namespace DrivingSchool.Views
                 return;
             }
 
-            DialogResult = true;
-            Close();
+            try
+            {
+                var medicals = _dataService.LoadMedicalData();
+
+                if (_isEditMode)
+                {
+                    var existingMedical = medicals.Certificates.FirstOrDefault(m => m.Id == MedicalData.Id);
+                    if (existingMedical != null)
+                    {
+                        existingMedical.Series = MedicalData.Series;
+                        existingMedical.Number = MedicalData.Number;
+                        existingMedical.MedicalInstitution = MedicalData.MedicalInstitution;
+                        existingMedical.IssueDate = MedicalData.IssueDate;
+                        existingMedical.ValidUntil = MedicalData.ValidUntil;
+                        existingMedical.Region = MedicalData.Region;
+                    }
+                }
+                else
+                {
+                    medicals.Certificates.Add(MedicalData);
+                }
+
+                _dataService.SaveMedicalData(medicals);
+
+                DialogResult = true;
+                Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при сохранении данных: {ex.Message}", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)

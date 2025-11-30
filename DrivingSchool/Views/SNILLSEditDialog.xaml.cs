@@ -38,6 +38,26 @@ namespace DrivingSchool.Views
             }
 
             DataContext = SNILSData;
+
+            var students = _dataService.LoadStudents();
+            var student = students.Students.FirstOrDefault(s => s.Id == studentId);
+            if (student != null)
+            {
+                Title += $" - {student.FullName}";
+            }
+
+            UpdateStudentInfo();
+
+        }
+
+        private void UpdateStudentInfo()
+        {
+            var students = _dataService.LoadStudents();
+            var student = students.Students.FirstOrDefault(s => s.Id == _studentId);
+            if (student != null)
+            {
+                TitleTextBlock.Text = $"Данные СНИЛС учащегося: {student.FullName}";
+            }
         }
 
         private int GetNextSNILSId()
@@ -62,8 +82,35 @@ namespace DrivingSchool.Views
                 return;
             }
 
-            DialogResult = true;
-            Close();
+            try
+            {
+                var snilsList = _dataService.LoadSNILSData();
+
+                if (_isEditMode)
+                {
+                    var existingSNILS = snilsList.SNILSList.FirstOrDefault(s => s.Id == SNILSData.Id);
+                    if (existingSNILS != null)
+                    {
+                        existingSNILS.Number = SNILSData.Number;
+                        existingSNILS.IssueDate = SNILSData.IssueDate;
+                        existingSNILS.IssuedBy = SNILSData.IssuedBy;
+                    }
+                }
+                else
+                {
+                    snilsList.SNILSList.Add(SNILSData);
+                }
+
+                _dataService.SaveSNILSData(snilsList);
+
+                DialogResult = true;
+                Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при сохранении данных: {ex.Message}", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)

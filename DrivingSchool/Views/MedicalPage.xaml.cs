@@ -41,6 +41,12 @@ namespace DrivingSchool.Views
             }
         }
 
+        private string GetStudentName(int studentId)
+        {
+            var student = _students.Students.FirstOrDefault(s => s.Id == studentId);
+            return student?.FullName ?? "Неизвестный студент";
+        }
+
         private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             var searchText = SearchTextBox.Text?.ToLower() ?? string.Empty;
@@ -124,14 +130,29 @@ namespace DrivingSchool.Views
                 StatusPanel.Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(232, 245, 233));
             }
 
+            UpdateStudentNames();
             UpdateButtonsAvailability();
+        }
+
+        private void UpdateStudentNames()
+        {
+            var items = MedicalGrid.ItemsSource as System.Collections.IEnumerable;
+            if (items != null)
+            {
+                foreach (var item in items)
+                {
+                    if (item is StudentMedicalCertificate medical)
+                    {
+                        medical.StudentName = GetStudentName(medical.StudentId);
+                    }
+                }
+            }
         }
 
         private void UpdateButtonsAvailability()
         {
             if (_selectedStudent == null)
             {
-                // ДОБАВИТЬ ЭТОТ БЛОК
                 AddMedicalButton.IsEnabled = false;
                 EditMedicalButton.IsEnabled = false;
                 DeleteMedicalButton.IsEnabled = false;
@@ -183,9 +204,7 @@ namespace DrivingSchool.Views
                 var dialog = new MedicalEditDialog(_dataService, _selectedStudent.Id);
                 if (dialog.ShowDialog() == true)
                 {
-                    _medicalList.Certificates.Add(dialog.MedicalData);
-                    _dataService.SaveMedicalData(_medicalList);
-                    LoadMedicalDataForStudent();
+                    LoadData();
                     MessageBox.Show("Медицинская справка добавлена!", "Успех");
                 }
             }
@@ -198,14 +217,8 @@ namespace DrivingSchool.Views
                 var dialog = new MedicalEditDialog(_dataService, selectedMedical.StudentId, selectedMedical);
                 if (dialog.ShowDialog() == true)
                 {
-                    var index = _medicalList.Certificates.IndexOf(selectedMedical);
-                    if (index >= 0)
-                    {
-                        _medicalList.Certificates[index] = dialog.MedicalData;
-                        _dataService.SaveMedicalData(_medicalList);
-                        LoadMedicalDataForStudent();
-                        MessageBox.Show("Медицинская справка обновлена!", "Успех");
-                    }
+                    LoadData();
+                    MessageBox.Show("Медицинская справка обновлена!", "Успех");
                 }
             }
         }

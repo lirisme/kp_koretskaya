@@ -41,6 +41,12 @@ namespace DrivingSchool.Views
             }
         }
 
+        private string GetStudentName(int studentId)
+        {
+            var student = _students.Students.FirstOrDefault(s => s.Id == studentId);
+            return student?.FullName ?? "Неизвестный студент";
+        }
+
         private void SearchTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             var searchText = SearchTextBox.Text?.ToLower() ?? string.Empty;
@@ -124,7 +130,23 @@ namespace DrivingSchool.Views
                 StatusPanel.Background = new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(232, 245, 233));
             }
 
+            UpdateStudentNames();
             UpdateButtonsAvailability();
+        }
+
+        private void UpdateStudentNames()
+        {
+            var items = SNILSGrid.ItemsSource as System.Collections.IEnumerable;
+            if (items != null)
+            {
+                foreach (var item in items)
+                {
+                    if (item is StudentSNILS snils)
+                    {
+                        snils.StudentName = GetStudentName(snils.StudentId);
+                    }
+                }
+            }
         }
 
         private void UpdateButtonsAvailability()
@@ -182,9 +204,7 @@ namespace DrivingSchool.Views
                 var dialog = new SNILSEditDialog(_dataService, _selectedStudent.Id);
                 if (dialog.ShowDialog() == true)
                 {
-                    _snilsList.SNILSList.Add(dialog.SNILSData);
-                    _dataService.SaveSNILSData(_snilsList);
-                    LoadSNILSDataForStudent();
+                    LoadData();
                     MessageBox.Show("Данные СНИЛС добавлены!", "Успех");
                 }
             }
@@ -197,14 +217,8 @@ namespace DrivingSchool.Views
                 var dialog = new SNILSEditDialog(_dataService, selectedSNILS.StudentId, selectedSNILS);
                 if (dialog.ShowDialog() == true)
                 {
-                    var index = _snilsList.SNILSList.IndexOf(selectedSNILS);
-                    if (index >= 0)
-                    {
-                        _snilsList.SNILSList[index] = dialog.SNILSData;
-                        _dataService.SaveSNILSData(_snilsList);
-                        LoadSNILSDataForStudent();
-                        MessageBox.Show("Данные СНИЛС обновлены!", "Успех");
-                    }
+                    LoadData();
+                    MessageBox.Show("Данные СНИЛС обновлены!", "Успех");
                 }
             }
         }

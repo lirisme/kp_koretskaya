@@ -14,6 +14,9 @@ namespace DrivingSchool.Models
         public string MedicalInstitution { get; set; } = string.Empty;
         public string Region { get; set; } = string.Empty;
         public DateTime? ValidUntil { get; set; }
+
+        [XmlIgnore]
+        public string StudentName { get; set; } = string.Empty;
     }
 
     [Serializable]

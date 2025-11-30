@@ -702,10 +702,19 @@ namespace DrivingSchool.Views
                 GroupsGrid.ItemsSource = filteredGroups;
             }
         }
- 
+
         private void GroupsGrid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            ViewStudents_Click(sender, e);
+            var row = ItemsControl.ContainerFromElement((DataGrid)sender, e.OriginalSource as DependencyObject) as DataGridRow;
+
+            if (row != null && row.DataContext is StudyGroup group)
+            {
+                var dialog = new GroupEditDialog(_dataService, group);
+                if (dialog.ShowDialog() == true)
+                {
+                    LoadData();
+                }
+            }
         }
     }
 }

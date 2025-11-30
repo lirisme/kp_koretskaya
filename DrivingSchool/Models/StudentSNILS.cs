@@ -11,6 +11,9 @@ namespace DrivingSchool.Models
         public string Number { get; set; } = string.Empty;
         public DateTime? IssueDate { get; set; }
         public string IssuedBy { get; set; } = string.Empty;
+
+        [XmlIgnore]
+        public string StudentName { get; set; } = string.Empty;
     }
 
     [Serializable]

@@ -19,6 +19,9 @@ namespace DrivingSchool.Models
 
         [XmlIgnore]
         public string CategoryCode { get; set; } = string.Empty;
+
+        [XmlIgnore]
+        public string StudentName { get; set; } = string.Empty;
     }
 
     [Serializable]

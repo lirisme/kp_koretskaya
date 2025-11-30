@@ -68,7 +68,8 @@
                   AutoGenerateColumns="False"
                   IsReadOnly="True"
                   SelectionMode="Single"
-                  Margin="10">
+                  Margin="10"
+                  MouseDoubleClick="GroupsGrid_MouseDoubleClick">
 
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Группа" Binding="{Binding Name}" Width="*"/>

@@ -32,8 +32,8 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Text="Свидетельство об окончании" FontWeight="Bold" FontSize="14" Margin="0,0,0,10" Grid.ColumnSpan="2"/>
-
+        <TextBlock Grid.Row="0" x:Name="TitleTextBlock" Text="Свидетельство об окончании" FontWeight="Bold" FontSize="14" Margin="0,0,0,10" Grid.ColumnSpan="2"/>
+        
         <StackPanel Grid.Row="1" Grid.ColumnSpan="2">
             <GroupBox Header="Серия и номер свидетельства" Margin="0,0,0,10">
                 <Grid>

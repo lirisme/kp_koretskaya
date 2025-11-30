@@ -3,93 +3,192 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Редактирование группы" 
         WindowStartupLocation="CenterOwner"
-        SizeToContent="WidthAndHeight"
-        MinWidth="400"
+        Width="900" Height="700"
+        MinWidth="800" MinHeight="600"
         Background="White">
 
-    <Border Padding="20" Background="White">
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
+    <Window.Resources>
+        <Style x:Key="StudentItemStyle" TargetType="Border">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderBrush" Value="#E0E0E0"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="4"/>
+            <Setter Property="Margin" Value="0,2,0,2"/>
+            <Setter Property="Padding" Value="10,8"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#F8F9FA"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
 
-            <TextBlock Grid.Row="0" Text="{Binding Title, RelativeSource={RelativeSource AncestorType=Window}}"
-                      FontSize="18" FontWeight="Bold" Foreground="#2C3C4D"
-                      Margin="0,0,0,20" HorizontalAlignment="Center"/>
+    <Grid Margin="15">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
 
-            <Grid Grid.Row="1" Margin="0,0,0,10">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="120"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Text="Номер группы:" 
-                          VerticalAlignment="Center" FontWeight="SemiBold"/>
-                <TextBox Grid.Column="1" x:Name="NameTextBox" 
-                        Text="{Binding StudyGroup.Name}" Padding="8"/>
-            </Grid>
+        <TextBlock Grid.Row="0" Text="{Binding Title, RelativeSource={RelativeSource AncestorType=Window}}"
+                  FontSize="18" FontWeight="Bold" Foreground="#2C3C4D"
+                  Margin="0,0,0,15" HorizontalAlignment="Center"/>
 
-            <Grid Grid.Row="2" Margin="0,0,0,10">
+        <GroupBox Grid.Row="1" Header="Основные данные группы" Margin="0,0,0,10">
+            <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="120"/>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="10"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Text="Даты обучения:" 
-                          VerticalAlignment="Center" FontWeight="SemiBold"/>
-                <DatePicker Grid.Column="1" x:Name="StartDatePicker"
-                           SelectedDate="{Binding StudyGroup.StartDate}"/>
-                <TextBlock Grid.Column="2" Text="—" 
-                          HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                <DatePicker Grid.Column="3" x:Name="EndDatePicker"
-                           SelectedDate="{Binding StudyGroup.EndDate}"/>
-            </Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
-            <Grid Grid.Row="3" Margin="0,0,0,20">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="120"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <TextBlock Grid.Column="0" Text="Статус:" 
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Номер группы:" 
                           VerticalAlignment="Center" FontWeight="SemiBold"/>
-                <ComboBox Grid.Column="1" x:Name="StatusComboBox"
-                         SelectedItem="{Binding StudyGroup.Status}" Padding="8">
+                <TextBox Grid.Row="0" Grid.Column="1" x:Name="NameTextBox" 
+                        Text="{Binding StudyGroup.Name}" Padding="8" Margin="0,0,10,5"/>
+
+                <TextBlock Grid.Row="0" Grid.Column="2" Text="Статус:" 
+                          VerticalAlignment="Center" FontWeight="SemiBold" Margin="10,0,0,0"/>
+                <ComboBox Grid.Row="0" Grid.Column="3" x:Name="StatusComboBox"
+                         SelectedItem="{Binding StudyGroup.Status}" Padding="8" Margin="0,0,0,5">
                     <ComboBoxItem Content="Активна"/>
                     <ComboBoxItem Content="Завершена"/>
                     <ComboBoxItem Content="Планируется"/>
                 </ComboBox>
+
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Даты обучения:" 
+                          VerticalAlignment="Center" FontWeight="SemiBold"/>
+                <DatePicker Grid.Row="1" Grid.Column="1" x:Name="StartDatePicker"
+                           SelectedDate="{Binding StudyGroup.StartDate}" Margin="0,0,10,0"/>
+                <TextBlock Grid.Row="1" Grid.Column="2" Text="—" 
+                          HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                <DatePicker Grid.Row="1" Grid.Column="3" x:Name="EndDatePicker"
+                           SelectedDate="{Binding StudyGroup.EndDate}"/>
             </Grid>
+        </GroupBox>
 
-            <Border Grid.Row="4" Background="#F8F9FA" BorderBrush="#BDC3C7" 
-                    BorderThickness="1" CornerRadius="3" Padding="10" Margin="0,0,0,20">
-                <TextBlock x:Name="DurationInfoText" Text="Длительность: расчет..." 
-                          FontSize="12" Foreground="#7F8C8D" TextAlignment="Center"/>
-            </Border>
+        <GroupBox Grid.Row="2" Header="Студенты в группе" Margin="0,0,0,10">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
-            <Grid Grid.Row="5">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                    <Button Content="➕ Добавить студента" Click="AddStudent_Click"
+                            Padding="10,5" Background="#27AE60" Foreground="White"
+                            ToolTip="Добавить нового или существующего студента"/>
+                    <Button Content="👥 Выбрать из списка" Click="SelectStudents_Click"
+                            Padding="10,5" Background="#3498DB" Foreground="White" Margin="10,0,0,0"
+                            ToolTip="Выбрать студентов из общего списка"/>
+                    <Button Content="↔️ Переместить в группу" Click="MoveToGroup_Click"
+                            Padding="10,5" Background="#9B59B6" Foreground="White" Margin="10,0,0,0"
+                            ToolTip="Переместить студентов без группы в эту группу"/>
+                    <Button Content="🗑️ Удалить выбранных" Click="RemoveStudent_Click"
+                            Padding="10,5" Background="#E74C3C" Foreground="White" Margin="10,0,0,0"
+                            ToolTip="Удалить выбранных студентов из группы"/>
 
-                <Button Grid.Column="1" x:Name="SaveButton" 
-                       Content="💾 Сохранить" 
-                       Click="SaveButton_Click"
-                       Background="#27AE60" Foreground="White"
-                       Padding="15,8" Margin="5,0"/>
+                    <TextBlock Text="{Binding StudentsInGroup.Count, StringFormat=Студентов: {0}}"
+                              VerticalAlignment="Center" Margin="20,0,0,0" FontWeight="SemiBold"/>
+                </StackPanel>
 
-                <Button Grid.Column="2" x:Name="CancelButton" 
-                       Content="❌ Отмена" 
-                       Click="CancelButton_Click"
-                       Background="#95A5A6" Foreground="White"
-                       Padding="15,8" Margin="5,0"/>
+                <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                    <ItemsControl x:Name="StudentsList" ItemsSource="{Binding StudentsInGroup}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Style="{StaticResource StudentItemStyle}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <StackPanel Grid.Column="0" Orientation="Horizontal">
+                                            <CheckBox IsChecked="{Binding IsSelected}" 
+                                                     VerticalAlignment="Center" Margin="0,0,10,0"
+                                                     ToolTip="Выбрать студента"/>
+                                            <StackPanel>
+                                                <TextBlock Text="{Binding Student.FullName}" FontWeight="SemiBold" 
+                                                          Cursor="Hand" MouseLeftButtonDown="StudentName_MouseLeftButtonDown"
+                                                          ToolTip="Кликните для просмотра данных студента">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Foreground" Value="#2C3C4D"/>
+                                                            <Style.Triggers>
+                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                    <Setter Property="Foreground" Value="#2980B9"/>
+                                                                    <Setter Property="TextDecorations" Value="Underline"/>
+                                                                </Trigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                                <StackPanel Orientation="Horizontal">
+                                                    <TextBlock Text="{Binding Student.Phone}" Foreground="Gray" FontSize="11" Margin="0,0,15,0"/>
+                                                    <TextBlock Text="{Binding Student.Age, StringFormat=Возраст: {0} лет}" 
+                                                              Foreground="Gray" FontSize="11" Margin="0,0,15,0"/>
+                                                    <TextBlock Text="{Binding Student.Email}" Foreground="Gray" FontSize="11"/>
+                                                </StackPanel>
+                                            </StackPanel>
+                                        </StackPanel>
+
+                                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                            <Button Content="✏️" Click="EditStudent_Click" 
+                                                    Tag="{Binding}"
+                                                    Padding="8,4" Margin="2,0"
+                                                    ToolTip="Редактировать студента"
+                                                    Background="Transparent" BorderThickness="0"/>
+                                            <Button Content="👁️" Click="ViewStudentDetails_Click" 
+                                                    Tag="{Binding}"
+                                                    Padding="8,4" Margin="2,0"
+                                                    ToolTip="Подробные данные студента"
+                                                    Background="Transparent" BorderThickness="0"/>
+                                            <Button Content="📋" Click="ViewStudentDocuments_Click" 
+                                                    Tag="{Binding}"
+                                                    Padding="8,4" Margin="2,0"
+                                                    ToolTip="Документы студента"
+                                                    Background="Transparent" BorderThickness="0"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+
+                <Border Grid.Row="2" Background="#F8F9FA" BorderBrush="#BDC3C7" 
+                        BorderThickness="1" CornerRadius="3" Padding="10" Margin="0,10,0,0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock x:Name="DurationInfoText" Text="Длительность: расчет..." 
+                                  FontSize="12" Foreground="#7F8C8D"/>
+                        <Button Grid.Column="1" Content="🔍 Найти студента по группе" 
+                                Click="FindStudentByGroup_Click"
+                                Padding="8,4" Background="#F39C12" Foreground="White"
+                                ToolTip="Найти студента в других группах"/>
+                    </Grid>
+                </Border>
             </Grid>
-        </Grid>
-    </Border>
+        </GroupBox>
+
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="💾 Сохранить" Click="SaveButton_Click"
+                    Background="#27AE60" Foreground="White"
+                    Padding="15,8" Margin="5,0"/>
+
+            <Button Content="❌ Отмена" Click="CancelButton_Click"
+                    Background="#95A5A6" Foreground="White"
+                    Padding="15,8" Margin="5,0"/>
+        </StackPanel>
+    </Grid>
 </Window>

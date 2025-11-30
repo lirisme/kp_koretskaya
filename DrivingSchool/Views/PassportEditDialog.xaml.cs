@@ -41,6 +41,25 @@ namespace DrivingSchool.Views
 
             DataContext = PassportData;
             InitializeDocumentTypeComboBox();
+
+            var students = _dataService.LoadStudents();
+            var student = students.Students.FirstOrDefault(s => s.Id == studentId);
+            if (student != null)
+            {
+                Title += $" - {student.FullName}";
+            }
+
+            UpdateStudentInfo();
+        }
+
+        private void UpdateStudentInfo()
+        {
+            var students = _dataService.LoadStudents();
+            var student = students.Students.FirstOrDefault(s => s.Id == _studentId);
+            if (student != null)
+            {
+                TitleTextBlock.Text = $"Паспортные данные учащегося: {student.FullName}";
+            }
         }
 
         private int GetNextPassportId()
@@ -91,8 +110,38 @@ namespace DrivingSchool.Views
                 return;
             }
 
-            DialogResult = true;
-            Close();
+            try
+            {
+                var passports = _dataService.LoadPassportData();
+
+                if (_isEditMode)
+                {
+                    var existingPassport = passports.Passports.FirstOrDefault(p => p.Id == PassportData.Id);
+                    if (existingPassport != null)
+                    {
+                        existingPassport.DocumentType = PassportData.DocumentType;
+                        existingPassport.Series = PassportData.Series;
+                        existingPassport.Number = PassportData.Number;
+                        existingPassport.IssuedBy = PassportData.IssuedBy;
+                        existingPassport.DivisionCode = PassportData.DivisionCode;
+                        existingPassport.IssueDate = PassportData.IssueDate;
+                    }
+                }
+                else
+                {
+                    passports.Passports.Add(PassportData);
+                }
+
+                _dataService.SavePassportData(passports);
+
+                DialogResult = true;
+                Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при сохранении данных: {ex.Message}", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)

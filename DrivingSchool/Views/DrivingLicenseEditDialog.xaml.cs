@@ -38,7 +38,7 @@ namespace DrivingSchool.Views
                     IssueDate = DateTime.Now,
                     ExpiryDate = DateTime.Now.AddYears(10),
                     Categories = GetStudentCategoryCode(),
-                    ExperienceYears = 0
+                    ExperienceYears = CalculateExperience(DateTime.Now)
                 };
                 _isEditMode = false;
                 Title = "Добавление водительского удостоверения";
@@ -46,33 +46,41 @@ namespace DrivingSchool.Views
 
             DataContext = LicenseData;
             InitializeCategoryField();
-        }
 
-        private int GetNextLicenseId()
-        {
-            var licenses = _dataService.LoadDrivingLicenses();
-            return licenses.Licenses.Count > 0 ? licenses.Licenses.Max(p => p.Id) + 1 : 1;
-        }
+            IssueDatePicker.SelectedDateChanged += IssueDatePicker_SelectedDateChanged;
 
-        private string GetStudentCategoryCode()
-        {
             if (_student != null)
             {
-                var categories = _dataService.LoadVehicleCategories();
-                var studentCategory = categories.Categories.FirstOrDefault(c => c.Id == _student.VehicleCategoryId);
-                return studentCategory?.Code ?? "B";
+                Title += $" - {_student.FullName}";
             }
-            return "B";
+
+            UpdateStudentInfo();
         }
 
-        private void InitializeCategoryField()
+        private int CalculateExperience(DateTime issueDate)
         {
-            string categoryCode = GetStudentCategoryCode();
+            if (issueDate == default) return 0;
 
-            CategoriesTextBox.Text = categoryCode;
-            CategoriesTextBox.IsEnabled = false;
+            var today = DateTime.Today;
+            var experience = today.Year - issueDate.Year;
 
-            CategoriesTextBox.ToolTip = "Категория автоматически заполняется из данных студента";
+            if (issueDate.Date > today.AddYears(-experience))
+            {
+                experience--;
+            }
+
+            return Math.Max(0, experience);
+        }
+
+        private void IssueDatePicker_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (IssueDatePicker.SelectedDate.HasValue)
+            {
+                LicenseData.ExperienceYears = CalculateExperience(IssueDatePicker.SelectedDate.Value);
+
+                var binding = ExperienceTextBox.GetBindingExpression(TextBox.TextProperty);
+                binding?.UpdateTarget();
+            }
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
@@ -100,17 +108,82 @@ namespace DrivingSchool.Views
                 return;
             }
 
-            if (!int.TryParse(ExperienceTextBox.Text, out int experience) || experience < 0)
+            try
             {
-                MessageBox.Show("Стаж должен быть положительным числом", "Ошибка",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
+                var licenses = _dataService.LoadDrivingLicenses();
+
+                if (_isEditMode)
+                {
+                    var existingLicense = licenses.Licenses.FirstOrDefault(c => c.Id == LicenseData.Id);
+                    if (existingLicense != null)
+                    {
+                        existingLicense.Series = LicenseData.Series;
+                        existingLicense.Number = LicenseData.Number;
+                        existingLicense.Categories = LicenseData.Categories;
+                        existingLicense.IssuedBy = LicenseData.IssuedBy;
+                        existingLicense.DivisionCode = LicenseData.DivisionCode;
+                        existingLicense.IssueDate = LicenseData.IssueDate;
+                        existingLicense.ExpiryDate = LicenseData.ExpiryDate;
+                        existingLicense.ExperienceYears = LicenseData.ExperienceYears;
+                    }
+                }
+                else
+                {
+                    licenses.Licenses.Add(LicenseData);
+                }
+
+                _dataService.SaveDrivingLicenses(licenses);
+
+                DialogResult = true;
+                Close();
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при сохранении данных: {ex.Message}", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
 
-            LicenseData.ExperienceYears = experience;
+        private void UpdateStudentInfo()
+        {
+            if (_student != null)
+            {
+                TitleTextBlock.Text = $"Водительское удостоверение учащегося: {_student.FullName}";
 
-            DialogResult = true;
-            Close();
+                var categories = _dataService.LoadVehicleCategories();
+                var studentCategory = categories.Categories.FirstOrDefault(c => c.Id == _student.VehicleCategoryId);
+                if (studentCategory != null)
+                {
+                    CategoriesTextBox.ToolTip = $"Категория автоматически заполняется из данных студента: {_student.FullName}";
+                }
+            }
+        }
+
+        private int GetNextLicenseId()
+        {
+            var licenses = _dataService.LoadDrivingLicenses();
+            return licenses.Licenses.Count > 0 ? licenses.Licenses.Max(p => p.Id) + 1 : 1;
+        }
+
+        private string GetStudentCategoryCode()
+        {
+            if (_student != null)
+            {
+                var categories = _dataService.LoadVehicleCategories();
+                var studentCategory = categories.Categories.FirstOrDefault(c => c.Id == _student.VehicleCategoryId);
+                return studentCategory?.Code ?? "B";
+            }
+            return "B";
+        }
+
+        private void InitializeCategoryField()
+        {
+            string categoryCode = GetStudentCategoryCode();
+
+            CategoriesTextBox.Text = categoryCode;
+            CategoriesTextBox.IsEnabled = false;
+
+            CategoriesTextBox.ToolTip = "Категория автоматически заполняется из данных студента";
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
